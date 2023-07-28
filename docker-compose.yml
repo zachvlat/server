@@ -10,4 +10,78 @@ services:
       - '443:443' 
     volumes:
       - ./nginx/data:/data
-      - ./nginx/letsencrypt:/etc/letsencrypt
+      - ./nginx/letsencrypt:/etc/letsencrypt 
+
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin 
+    volumes:
+      - ./nextcloud/appdata:/config 
+      - ./nextcloud/data:/data
+    restart: unless-stopped 
+
+  homeassistant:
+    image: lscr.io/linuxserver/homeassistant:latest
+    container_name: homeassistant 
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin 
+    volumes:
+      - ./hass/config:/config 
+    restart: unless-stopped
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin 
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin 
+    volumes:
+      - ./jellyfin/config:/config
+      - ./jellyfin/tvshows:/data/tvshows
+      - ./jellyfin/movies:/data/movies 
+    restart: unless-stopped
+    
+   filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: filebrowser
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+    volumes:
+      - ./filebrowser:/srv # Change to desired data directory
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - '9000:9000'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Allow access to Docker from Portainer
+
+  deemix:
+    image: ghcr.io/bocki/deemix-docker:latest
+    container_name: deemix
+    restart: unless-stopped
+    ports:
+      - '6595:6595'
+    volumes:
+      - ./deemix:/downloads # Change to desired download directory
+
+  transmission:
+    image: linuxserver/transmission:latest
+    container_name: transmission
+    restart: unless-stopped
+    ports:
+      - '9091:9091'
+    volumes:
+      - ./transmission/config:/config
+      - ./transmission/downloads:/downloads
+      - ./transmission/watch:/watch 
