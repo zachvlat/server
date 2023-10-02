@@ -1,16 +1,16 @@
-version: '2.2' 
+version: '2.2'
 services:
   nginxproxymanager:
-    image: 'jc21/nginx-proxy-manager:latest' 
+    image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginxproxymanager
-    restart: unless-stopped 
+    restart: unless-stopped
     ports:
       - '80:80'
       - '81:81'
-      - '443:443' 
+      - '443:443'
     volumes:
       - ./nginx/data:/data
-      - ./nginx/letsencrypt:/etc/letsencrypt 
+      - ./nginx/letsencrypt:/etc/letsencrypt
 
   nextcloud:
     image: lscr.io/linuxserver/nextcloud:latest
@@ -18,70 +18,84 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/Berlin 
+      - TZ=Europe/Berlin
     volumes:
-      - ./nextcloud/appdata:/config 
+      - ./nextcloud/appdata:/config
       - ./nextcloud/data:/data
-    restart: unless-stopped 
+    restart: unless-stopped
 
   homeassistant:
     image: lscr.io/linuxserver/homeassistant:latest
-    container_name: homeassistant 
+    container_name: homeassistant
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/Berlin 
+      - TZ=Europe/Berlin
     volumes:
-      - ./hass/config:/config 
+      - ./hass/config:/config
     restart: unless-stopped
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:latest
-    container_name: jellyfin 
+    container_name: jellyfin
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/Berlin 
+      - TZ=Europe/Berlin
     volumes:
       - ./jellyfin/config:/config
       - ./jellyfin/tvshows:/data/tvshows
-      - ./jellyfin/movies:/data/movies 
+      - ./jellyfin/movies:/data/movies
     restart: unless-stopped
-    
-   filebrowser:
-    image: filebrowser/filebrowser:latest
-    container_name: filebrowser
-    restart: unless-stopped
-    ports:
-      - '8080:80'
-    volumes:
-      - ./filebrowser:/srv # Change to desired data directory
-
-  portainer:
-    image: portainer/portainer-ce:latest
-    container_name: portainer
-    restart: unless-stopped
-    ports:
-      - '9000:9000'
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock # Allow access to Docker from Portainer
-
-  deemix:
-    image: ghcr.io/bocki/deemix-docker:latest
-    container_name: deemix
-    restart: unless-stopped
-    ports:
-      - '6595:6595'
-    volumes:
-      - ./deemix:/downloads # Change to desired download directory
 
   transmission:
     image: linuxserver/transmission:latest
     container_name: transmission
-    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+    volumes:
+      - ./transmission:/config
+      - /your/downloads/directory:/downloads
     ports:
       - '9091:9091'
+    restart: unless-stopped
+
+  deemix:
+    image: lscr.io/linuxserver/deemix:latest
+    container_name: deemix
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
     volumes:
-      - ./transmission/config:/config
-      - ./transmission/downloads:/downloads
-      - ./transmission/watch:/watch 
+      - ./deemix:/config
+      - /your/music/directory:/downloads
+    ports:
+      - '9666:9666'
+    restart: unless-stopped
+
+  filebrowser:
+    image: linuxserver/filebrowser:latest
+    container_name: filebrowser
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+    volumes:
+      - ./filebrowser:/config
+      - /your/files/directory:/srv
+    ports:
+      - '8082:80'
+    restart: unless-stopped
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    command: -H unix:///var/run/docker.sock
+    ports:
+      - '9000:9000'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
