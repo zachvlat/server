@@ -12,4 +12,4 @@ if ! ping -q -c 1 -W 1 github.com > /dev/null 2>&1; then
 fi
 
 # Pull the latest Portainer CE image and run it as a Docker container
-sudo docker run -d -p 9000:9000 -p 9443:9443 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest --logo "/home/zatsando/server/avatar.jpg" || error "Failed to run Portainer docker image!"
+sudo docker run -d -p 9000:9000 -p 9443:9443 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest --logo "/home/$USER/zachvlat/server/avatar.jpg" || error "Failed to run Portainer docker image!"

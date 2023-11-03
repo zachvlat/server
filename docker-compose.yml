@@ -41,7 +41,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/Berlin
+      - TZ=Europe/Athens
     volumes:
       - ./jellyfin/config:/config
       - ./jellyfin/tvshows:/data/tvshows
@@ -55,7 +55,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/Berlin
+      - TZ=Europe/Athens
     volumes:
       - ./transmission:/config
       - ./jellyfin/movies:/data/movies
@@ -64,26 +64,26 @@ services:
     restart: unless-stopped
 
   deemix:
-    image: lscr.io/linuxserver/deemix:latest
+    image: registry.gitlab.com/bockiii/deemix-docker
     container_name: deemix
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/Berlin
+      - TZ=Europe/Athens
     volumes:
       - ./deemix:/config
       - ./jellyfin/music:/data/music
     ports:
       - '9666:9666'
     restart: unless-stopped
-
+    
   filebrowser:
-    image: linuxserver/filebrowser:latest
+    image: hurlenko/filebrowser
     container_name: filebrowser
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/Berlin
+      - TZ=Europe/Athens
     volumes:
       - ./filebrowser:/config
       - /:/srv
