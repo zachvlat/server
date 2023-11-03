@@ -76,7 +76,7 @@ services:
     ports:
       - '9666:9666'
     restart: unless-stopped
-    
+
   filebrowser:
     image: hurlenko/filebrowser
     container_name: filebrowser
