@@ -35,6 +35,7 @@ Before you start, make sure you have the following prerequisites installed on yo
 
 2. ```bash
    sudo chmod +x ./docker.sh
+   ./docker.sh
    sudo usermod -aG docker $USER
 
 3. ```bash
