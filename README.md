@@ -1,4 +1,4 @@
-# Zachvlat Server Project
+# Server Project
 
 [![License](https://img.shields.io/badge/license-GNUv3-blue.svg)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/zachvlat/server.svg)](https://github.com/zachvlat/server/stargazers)
