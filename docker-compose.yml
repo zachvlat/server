@@ -25,7 +25,7 @@ services:
     restart: unless-stopped
 
   homeassistant:
-    image: lscr.io/linuxserver/homeassistant:latest
+    image: homeassistant/home-assistant:latest
     container_name: homeassistant
     environment:
       - PUID=1000
