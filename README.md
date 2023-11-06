@@ -7,6 +7,9 @@
 
 This project is aimed at creating a comprehensive server setup for various purposes, such as hosting Nextcloud, Home Assistant, Jellyfin, Transmission, Deemix, FileBrowser, and more using Docker containers and Nginx Proxy Manager.
 
+# DISCLAIMER!
+All the ports I 'm using on the yml files are according to MY needs. You have to check for yourself with docker ps to see what ports can or cannot use. The same goes with the path I chose etc... Check it, before you wreck it!
+
 ## Table of Contents
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
