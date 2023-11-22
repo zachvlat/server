@@ -19,6 +19,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Athens
+    ports:
+      - '9444:9444'
     volumes:
       - ./nextcloud/appdata:/config
       - ./nextcloud/data:/data
@@ -31,6 +33,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Athens
+    ports:
+      - '8999:8999'
     volumes:
       - ./hass/config:/config
     restart: unless-stopped
@@ -42,6 +46,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Athens
+    ports:
+      - '8096:8096'
     volumes:
       - ./jellyfin/config:/config
       - ./jellyfin/tvshows:/data/tvshows
