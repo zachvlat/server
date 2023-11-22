@@ -6,16 +6,20 @@ if ! ping -q -c 1 -W 1 github.com > /dev/null 2>&1; then
   exit 1
 fi
 
-# Install Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-sudo rm get-docker.sh
+echo "Installing proper dependencies and repos..."
 
-# Add the current user to the Docker group
+sudo apt -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+echo "deb [arch=arm64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list
+
+sudo apt update
+
+echo "Installing Docker and Docker Compose..."
+
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose
+
 sudo usermod -aG docker $USER
-
-# Install Docker Compose
-sudo curl -fsSL https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
 
 echo "Docker and Docker Compose have been installed. Please log out and log back in for the changes to take effect."
