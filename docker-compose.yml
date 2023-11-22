@@ -106,3 +106,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    ports:
+      - '82:80'
+    volumes:
+      - ./vaultwarden/data:/data
+    restart: unless-stopped
