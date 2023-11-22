@@ -1,13 +1,13 @@
-version: '2.2'
+version: "2.2"
 services:
   nginxproxymanager:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: "jc21/nginx-proxy-manager:latest"
     container_name: nginxproxymanager
     restart: unless-stopped
     ports:
-      - '80:80'
-      - '81:81'
-      - '443:443'
+      - "80:80"
+      - "81:81"
+      - "443:443"
     volumes:
       - ./nginx/data:/data
       - ./nginx/letsencrypt:/etc/letsencrypt
@@ -19,25 +19,21 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Athens
-    ports:
-      - '9444:9444'
     volumes:
       - ./nextcloud/appdata:/config
       - ./nextcloud/data:/data
     restart: unless-stopped
 
-  homeassistant:
-    image: homeassistant/home-assistant:latest
-    container_name: homeassistant
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Athens
-    ports:
-      - '8999:8999'
-    volumes:
-      - ./hass/config:/config
-    restart: unless-stopped
+#  homeassistant:
+#    image: lscr.io/linuxserver/homeassistant:latest
+#    container_name: homeassistant
+#    environment:
+#      - PUID=1000
+#      - PGID=1000
+#      - TZ=Europe/Athens
+#    volumes:
+#      - ./hass/config:/config
+#    restart: unless-stopped
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:latest
@@ -46,57 +42,22 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Athens
-    ports:
-      - '8096:8096'
     volumes:
       - ./jellyfin/config:/config
       - ./jellyfin/tvshows:/data/tvshows
       - ./jellyfin/movies:/data/movies
-      - ./jellyfin/music:/data/music
     restart: unless-stopped
 
-  transmission:
-    image: linuxserver/transmission:latest
-    container_name: transmission
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Athens
-    volumes:
-      - ./transmission:/config
-      - ./jellyfin/movies:/data/movies
-    ports:
-      - '9091:9091'
-    restart: unless-stopped
-
-  deemix:
-    image: registry.gitlab.com/bockiii/deemix-docker
-    container_name: deemix
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Athens
-    volumes:
-      - ./deemix:/config
-      - ./jellyfin/music:/data/music
-    ports:
-      - '9666:9666'
-    restart: unless-stopped
-
-  filebrowser:
-    image: hurlenko/filebrowser
-    container_name: filebrowser
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Athens
-    volumes:
-      - ./filebrowser:/config
-      - /:/srv
-    ports:
-      - '8082:80'
-    restart: unless-stopped
-
+#  filebrowser:
+#    image: hurlenko/filebrowser
+#    user: 1000:1000
+#    ports:
+#      - 8443:8080
+#    volumes:
+#      - ./:/data
+#      - ./filebrowser/config:/config
+#    restart: unless-stopped
+#
   portainer:
     image: portainer/portainer-ce:latest
     container_name: portainer
@@ -107,11 +68,67 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
+  navidrome:
+    image: deluan/navidrome:latest
+    user: "1000:1000"
+    ports:
+      - "4533:4533"
+    restart: unless-stopped
+    environment:
+      - ND_SCANSCHEDULE=1h
+      - ND_LOGLEVEL=info
+      - ND_SESSIONTIMEOUT=24h
+      - ND_BASEURL=""
+    volumes:
+      - "./navidrome/data:/data"
+      - "./navidrome/music:/music:ro"
+
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf
+    ports:
+      - 13378:80
+    volumes:
+      - ./audiobookshelf/audiobooks:/audiobooks
+      - ./audiobookshelf/podcasts:/podcasts
+      - ./audiobookshelf/metadata:/metadata
+      - ./audiobookshelf/config:/config
+    restart: unless-stopped
+
   vaultwarden:
     image: vaultwarden/server:latest
     container_name: vaultwarden
+    restart: unless-stopped
     ports:
-      - '82:80'
+      - 9445:80
     volumes:
-      - ./vaultwarden/data:/data
+      - ./bitwarden:/data:rw
+
+  deemix:
+    image: registry.gitlab.com/bockiii/deemix-docker
+    container_name: Deemix
+    volumes:
+      - ./deemix/downloads/:/downloads
+      - ./deemix/config:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK_SET=022
+    ports:
+      - 6595:6595
+
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Athens
+    volumes:
+      - ./transmission/data:/config
+      - ./transmission/downloads:/downloads
+      - ./transmission/watch:/watch
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
     restart: unless-stopped
