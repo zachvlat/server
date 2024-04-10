@@ -140,3 +140,14 @@ services:
       - '3000:3000'
       - '3001:3001'
     image: openspeedtest/latest
+    
+  photoprism:
+    image: photoprism/photoprism:latest
+    container_name: photoprism
+    restart: unless-stopped
+    ports:
+      - "2342:2342"
+    volumes:
+      - ./photoprism/storage:/photoprism/storage
+    environment:
+      - PHOTOPRISM_ADMIN_PASSWORD=1234
