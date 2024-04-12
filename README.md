@@ -35,48 +35,28 @@ Before you start, make sure you have the following prerequisites installed on yo
    ```bash
    git clone https://github.com/zachvlat/server.git
    cd server
+   ```
 
 2. ```bash
    sudo chmod +x ./docker.sh
    ./docker.sh
    sudo usermod -aG docker $USER
+   ```
 
 3. ```bash
    docker-compose up -d
+   ```
 
 ## Services
 
-Nextcloud
-
-    Image: Nextcloud Official
-    Description: Nextcloud is a self-hosted file sharing and collaboration platform.
-
-Home Assistant
-
-    Image: LinuxServer Home Assistant
-    Description: Home Assistant is an open-source home automation platform.
-
-Jellyfin
-
-    Image: LinuxServer Jellyfin
-    Description: Jellyfin is a personal media server software.
-
-Transmission
-
-    Image: LinuxServer Transmission
-    Description: Transmission is a lightweight BitTorrent client.
-
-Deemix
-
-    Image: Deemix Docker
-    Description: Deemix is a music streaming downloader.
-
-FileBrowser
-
-    Image: FileBrowser
-    Description: FileBrowser is a web-based file manager.
-
-Portainer
-
-    Image: Portainer CE
-    Description: Portainer is a Docker container management tool.
+1. [Nextcloud](https://nextcloud.com/)
+2. [Home Assistant](https://www.home-assistant.io/)
+3. [Jellyfin](https://jellyfin.org/)
+4. [Transmission](https://transmissionbt.com/)
+5. [Deemix](https://deemix.app/)
+6. [Navidrome](https://www.navidrome.org/)
+7. [Portainer](https://www.portainer.io/)
+8. [Audiobookshelf](https://github.com/Synthetica9/Audiobookshelf)
+9. [Vaultwarden](https://github.com/dani-garcia/vaultwarden)
+10. [Openspeedtest](https://openspeedtest.com/)
+11. [Photoprism](https://www.photoprism.app/) + MariaDB (This image is only for arm64)
