@@ -11,11 +11,13 @@ This project is aimed at creating a comprehensive server setup for various purpo
 All the ports I 'm using on the yml files are according to MY needs. You have to check for yourself with docker ps to see what ports can or cannot use. The same goes with the volume paths I chose etc... Check it, before you wreck it!
 
 ## Table of Contents
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Services](#services)
-- [License](#license)
+- [Server Project](#server-project)
+- [DISCLAIMER!](#disclaimer)
+  - [Table of Contents](#table-of-contents)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Services](#services)
 
 ## Getting Started
 
@@ -64,4 +66,4 @@ Before you start, make sure you have the following prerequisites installed on yo
 8. [Audiobookshelf](https://github.com/Synthetica9/Audiobookshelf)
 9. [Vaultwarden](https://github.com/dani-garcia/vaultwarden)
 10. [Openspeedtest](https://openspeedtest.com/)
-11. [Photoprism](https://www.photoprism.app/) + MariaDB (This image is only for arm64)
+11. [Immich](https://www.immich.app/)
