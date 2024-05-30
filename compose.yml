@@ -119,91 +119,64 @@ services:
       - '3000:3000'
       - '3001:3001'
     image: openspeedtest/latest
-    
-  photoprism:
-    image: photoprism/photoprism:arm64
-    restart: unless-stopped
-    stop_grace_period: 10s
-    depends_on:
-      - mariadb
-    security_opt:
-      - seccomp:unconfined
-      - apparmor:unconfined
-    ports:
-      - "2342:2342"
-    environment:
-      PHOTOPRISM_ADMIN_USER: "zatsando"
-      PHOTOPRISM_ADMIN_PASSWORD: "donganos"
-      PHOTOPRISM_AUTH_MODE: "password"
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"
-      PHOTOPRISM_DISABLE_TLS: "false"
-      PHOTOPRISM_DEFAULT_TLS: "true"
-      PHOTOPRISM_ORIGINALS_LIMIT: 5000
-      PHOTOPRISM_HTTP_COMPRESSION: "none"
-      PHOTOPRISM_WORKERS: 2
-      PHOTOPRISM_LOG_LEVEL: "info"
-      PHOTOPRISM_READONLY: "false"
-      PHOTOPRISM_EXPERIMENTAL: "false"
-      PHOTOPRISM_DISABLE_CHOWN: "false"
-      PHOTOPRISM_DISABLE_WEBDAV: "false"
-      PHOTOPRISM_DISABLE_SETTINGS: "false"
-      PHOTOPRISM_DISABLE_TENSORFLOW: "false"
-      PHOTOPRISM_DISABLE_FACES: "false"
-      PHOTOPRISM_DISABLE_CLASSIFICATION: "false"
-      PHOTOPRISM_DISABLE_VECTORS: "false"
-      PHOTOPRISM_DISABLE_RAW: "false"
-      PHOTOPRISM_RAW_PRESETS: "false"
-      PHOTOPRISM_JPEG_QUALITY: 85
-      PHOTOPRISM_DETECT_NSFW: "false"
-      PHOTOPRISM_UPLOAD_NSFW: "true"
-      PHOTOPRISM_DATABASE_DRIVER: "mysql"
-      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"
-      PHOTOPRISM_DATABASE_NAME: "photoprism"
-      PHOTOPRISM_DATABASE_USER: "photoprism"
-      PHOTOPRISM_DATABASE_PASSWORD: "insecure"
-      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
-      PHOTOPRISM_SITE_DESCRIPTION: ""
-      PHOTOPRISM_SITE_AUTHOR: ""
-    working_dir: "/photoprism"
-    volumes:
-      - ./photoprism/Pictures:/photoprism/originals
-      - ./photoprism/storage:/photoprism/storage
-  
-  mariadb:
-    image: arm64v8/mariadb:10.11
-    restart: unless-stopped
-    stop_grace_period: 5s
-    security_opt:
-      - seccomp:unconfined
-      - apparmor:unconfined
-    command: --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
-    volumes:
-      - "./mariadb/database:/var/lib/mysql"
-    environment:
-      MARIADB_AUTO_UPGRADE: "1"
-      MARIADB_INITDB_SKIP_TZINFO: "1"
-      MARIADB_DATABASE: "photoprism"
-      MARIADB_USER: "photoprism"
-      MARIADB_PASSWORD: "insecure"
-      MARIADB_ROOT_PASSWORD: "insecure"
-      
-  filebrowser:
-    image: hurlenko/filebrowser
-    user: 1000:1000
-    ports:
-      - 8443:8080
-    volumes:
-      - ./:/data
-      - ./filebrowser/config:/config
-    restart: unless-stopped
 
-  homeassistant:
-    image: lscr.io/linuxserver/homeassistant:latest
-    container_name: homeassistant
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Athens
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    command: ["start.sh", "immich"]
     volumes:
-      - ./hass/config:/config
-    restart: unless-stopped
+      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+      - ${EXTERNAL_PATH}:/usr/src/app/external
+    env_file:
+      - .env
+    ports:
+      - "2283:3001"
+    depends_on:
+      - redis
+      - database
+    restart: always
+
+  immich-microservices:
+    container_name: immich_microservices
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    command: ["start.sh", "microservices"]
+    volumes:
+      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+      - ${EXTERNAL_PATH}:/usr/src/app/external
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - database
+    restart: always
+
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    volumes:
+      - model-cache:/cache
+    env_file:
+      - .env
+    restart: always
+
+  redis:
+    container_name: immich_redis
+    image: redis:6.2-alpine
+    restart: always
+
+  database:
+    container_name: immich_postgres
+    image: tensorchord/pgvecto-rs:pg14-v0.2.0
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:
+  model-cache:
