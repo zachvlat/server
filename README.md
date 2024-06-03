@@ -65,5 +65,3 @@ Before you start, make sure you have the following prerequisites installed on yo
 7. [Portainer](https://www.portainer.io/)
 8. [Audiobookshelf](https://github.com/Synthetica9/Audiobookshelf)
 9. [Vaultwarden](https://github.com/dani-garcia/vaultwarden)
-10. [Openspeedtest](https://openspeedtest.com/)
-11. [Immich](https://www.immich.app/)
