@@ -43,9 +43,11 @@ Before you start, make sure you have the following prerequisites installed on yo
    sudo chmod +x ./docker.sh
    ./docker.sh
    sudo usermod -aG docker $USER
+   sudo reboot
    ```
 
 3. ```bash
+   cd server
    docker-compose up -d
    ```
    Note: If you are on Ubuntu Server 24+ choose the compose.yml file by typing
