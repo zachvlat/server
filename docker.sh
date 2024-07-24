@@ -19,7 +19,7 @@ sudo apt update
 
 echo "Installing Docker and Docker Compose..."
 
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose -y
 
 sudo usermod -aG docker $USER
 
