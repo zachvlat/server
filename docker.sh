@@ -23,4 +23,4 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose
 
 sudo usermod -aG docker $USER
 
-echo "Docker and Docker Compose have been installed. Please log out and log back in for the changes to take effect."
+echo "Docker and Docker Compose have been installed. Please reboot for the changes to take effect."
