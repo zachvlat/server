@@ -1,5 +1,14 @@
 version: "2.2"
 services:
+  filebrowser:
+    image: hurlenko/filebrowser
+    ports:
+      - 8188:8080
+    volumes:
+      - /:/data
+      - ./config:/config
+    restart: always
+
   nginxproxymanager:
     image: "jc21/nginx-proxy-manager:latest"
     container_name: nginxproxymanager
@@ -22,6 +31,7 @@ services:
     volumes:
       - ./nextcloud/appdata:/config
       - ./nextcloud/data:/data
+      - /mnt/$YOURDRIVE/Camera Uploads:/photos
     restart: unless-stopped
 
   jellyfin:
@@ -33,8 +43,8 @@ services:
       - TZ=Europe/Athens
     volumes:
       - ./jellyfin/config:/config
-      - ./jellyfin/tvshows:/data/tvshows
-      - ./jellyfin/movies:/data/movies
+      - /mnt/$YOURDRIVE/Series:/data/tvshows
+      - /mnt/$YOURDRIVE/Movies/complete:/data/movies
     restart: unless-stopped
 
   portainer:
@@ -49,25 +59,23 @@ services:
 
   navidrome:
     image: deluan/navidrome:latest
-    user: "1000:1000"
     ports:
       - "4533:4533"
-    restart: unless-stopped
     environment:
-      - ND_SCANSCHEDULE=1h
-      - ND_LOGLEVEL=info
-      - ND_SESSIONTIMEOUT=24h
-      - ND_BASEURL=""
+      ND_SCANSCHEDULE: 1h
+      ND_LOGLEVEL: info  
+      ND_SESSIONTIMEOUT: 24h
+      ND_BASEURL: ""
     volumes:
       - "./navidrome/data:/data"
-      - "./navidrome/music:/music:ro"
+      - "/mnt/$YOURDRIVE/Music:/music:ro"
 
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf
     ports:
       - 13378:80
     volumes:
-      - ./audiobookshelf/audiobooks:/audiobooks
+      - /mnt/$YOURDRIVE/AudioBooks:/audiobooks
       - ./audiobookshelf/podcasts:/podcasts
       - ./audiobookshelf/metadata:/metadata
       - ./audiobookshelf/config:/config
@@ -86,7 +94,7 @@ services:
     image: registry.gitlab.com/bockiii/deemix-docker
     container_name: Deemix
     volumes:
-      - ./deemix/downloads/:/downloads
+      - /mnt/$YOURDRIVE/Music:/downloads
       - ./deemix/config:/config
     environment:
       - PUID=1000
@@ -104,13 +112,10 @@ services:
       - TZ=Europe/Athens
     volumes:
       - ./transmission/data:/config
-      - ./transmission/downloads:/downloads
+      - /mnt/$YOURDRIVE/Movies:/downloads
       - ./transmission/watch:/watch
     ports:
       - 9091:9091
       - 51413:51413
       - 51413:51413/udp
     restart: unless-stopped
-#    volumes:
-#      - ./hass/config:/config
-#    restart: unless-stopped
