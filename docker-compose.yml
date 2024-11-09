@@ -12,7 +12,7 @@ services:
   nginxproxymanager:
     image: "jc21/nginx-proxy-manager:latest"
     container_name: nginxproxymanager
-    restart: unless-stopped
+    restart: always
     ports:
       - "80:80"
       - "81:81"
@@ -32,7 +32,7 @@ services:
       - ./nextcloud/appdata:/config
       - ./nextcloud/data:/data
       - /mnt/$YOURDRIVE/Camera Uploads:/photos
-    restart: unless-stopped
+    restart: always
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:latest
@@ -45,7 +45,7 @@ services:
       - ./jellyfin/config:/config
       - /mnt/$YOURDRIVE/Series:/data/tvshows
       - /mnt/$YOURDRIVE/Movies/complete:/data/movies
-    restart: unless-stopped
+    restart: always
 
   portainer:
     image: portainer/portainer-ce:latest
@@ -55,7 +55,7 @@ services:
       - '9000:9000'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
+    restart: always
 
   navidrome:
     image: deluan/navidrome:latest
@@ -79,7 +79,7 @@ services:
       - ./audiobookshelf/podcasts:/podcasts
       - ./audiobookshelf/metadata:/metadata
       - ./audiobookshelf/config:/config
-    restart: unless-stopped
+    restart: always
 
   vaultwarden:
     image: vaultwarden/server:latest
@@ -118,7 +118,7 @@ services:
       - 9091:9091
       - 51413:51413
       - 51413:51413/udp
-    restart: unless-stopped
+    restart: always
 
   pigallery2:
     image: bpatrik/pigallery2
