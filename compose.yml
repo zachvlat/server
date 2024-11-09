@@ -32,7 +32,7 @@ services:
       - nextcloud_appdata:/config
       - nextcloud_data:/data
       - /mnt/$YOURDRIVE/Camera Uploads:/photos
-    restart: unless-stopped
+    restart: always
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:latest
@@ -45,7 +45,7 @@ services:
       - jellyfin_config:/config
       - /mnt/$YOURDRIVE/Series:/data/tvshows
       - /mnt/$YOURDRIVE/Movies/complete:/data/movies
-    restart: unless-stopped
+    restart: always
 
   portainer:
     image: portainer/portainer-ce:latest
@@ -55,7 +55,7 @@ services:
       - '9000:9000'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
+    restart: always
 
   navidrome:
     image: deluan/navidrome:latest
@@ -79,7 +79,7 @@ services:
       - audiobookshelf_podcasts:/podcasts
       - audiobookshelf_metadata:/metadata
       - audiobookshelf_config:/config
-    restart: unless-stopped
+    restart: always
 
   vaultwarden:
     image: vaultwarden/server:latest
@@ -118,4 +118,16 @@ services:
       - 9091:9091
       - 51413:51413
       - 51413:51413/udp
-    restart: unless-stopped
+    restart: always
+
+  pigallery2:
+    image: bpatrik/pigallery2
+    container_name: pigallery2
+    ports:
+      - 8081:80
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - /mnt/$YOURDRIVE/myphotos/app/data/photos
+      - pigallery2/config:/app/data/config
+    restart: always
