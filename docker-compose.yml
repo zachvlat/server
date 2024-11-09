@@ -119,3 +119,16 @@ services:
       - 51413:51413
       - 51413:51413/udp
     restart: unless-stopped
+
+  pigallery2:
+    image: bpatrik/pigallery2
+    container_name: pigallery2
+    ports:
+      - 8081:80
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - /mnt/$YOURDRIVE/myphotos/app/data/photos
+      - ./pigallery2/config:/app/data/config
+    restart: always
+
