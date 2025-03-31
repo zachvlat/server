@@ -6,21 +6,26 @@ if ! ping -q -c 1 -W 1 github.com > /dev/null 2>&1; then
   exit 1
 fi
 
-echo "Installing proper dependencies and repos..."
+echo "Installing necessary dependencies..."
 
 sudo apt update
-sudo apt -y install apt-transport-https ca-certificates curl gnupg software-properties-common
+sudo apt -y install ca-certificates curl gnupg
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+# Add Docker’s official GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo tee /etc/apt/keyrings/docker.asc > /dev/null
+sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+# Add Docker repository
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 sudo apt update
 
 echo "Installing Docker and Docker Compose..."
 
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose -y
+sudo apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
+# Add user to Docker group to run Docker without sudo
 sudo usermod -aG docker $USER
 
 echo "Docker and Docker Compose have been installed. Please reboot for the changes to take effect."
