@@ -1,4 +1,5 @@
 #version: "3.1"
+
 services:
   filebrowser:
     image: hurlenko/filebrowser
@@ -31,7 +32,7 @@ services:
     volumes:
       - nextcloud_appdata:/config
       - nextcloud_data:/data
-      - /srv/media/photos:/photos
+      - nextcloud_photos:/photos
     ports:
       - 8080:80
       - 8443:443
@@ -46,8 +47,8 @@ services:
       - TZ=Europe/Athens
     volumes:
       - jellyfin_config:/config
-      - /srv/media/Series:/data/tvshows
-      - /srv/media/Movies/complete:/data/movies
+      - jellyfin_tv:/data/tvshows
+      - jellyfin_movies:/data/movies
     ports:
       - 8096:8096
       - 8920:8920
@@ -74,14 +75,14 @@ services:
       ND_BASEURL: ""
     volumes:
       - navidrome_data:/data
-      - /srv/media/Music:/music:ro
+      - navidrome_music:/music:ro
 
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf
     ports:
       - 13378:80
     volumes:
-      - /srv/media/AudioBooks:/audiobooks
+      - audiobookshelf_audiobooks:/audiobooks
       - audiobookshelf_podcasts:/podcasts
       - audiobookshelf_metadata:/metadata
       - audiobookshelf_config:/config
@@ -100,7 +101,7 @@ services:
     image: registry.gitlab.com/bockiii/deemix-docker
     container_name: Deemix
     volumes:
-      - /srv/media/Music:/downloads
+      - deemix_downloads:/downloads
       - deemix_config:/config
     environment:
       - PUID=1000
@@ -118,7 +119,7 @@ services:
       - TZ=Europe/Athens
     volumes:
       - transmission_data:/config
-      - /srv/media/Movies:/downloads
+      - transmission_downloads:/downloads
       - transmission_watch:/watch
     ports:
       - 9091:9091
@@ -134,6 +135,32 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - /srv/media/myphotos:/app/data/photos
+      - pigallery2_photos:/app/data/photos
       - pigallery2_config:/app/data/config
     restart: always
+
+volumes:
+  filebrowser_data:
+  filebrowser_config:
+  nginx_data:
+  nginx_letsencrypt:
+  nextcloud_appdata:
+  nextcloud_data:
+  nextcloud_photos:
+  jellyfin_config:
+  jellyfin_tv:
+  jellyfin_movies:
+  navidrome_data:
+  navidrome_music:
+  audiobookshelf_audiobooks:
+  audiobookshelf_podcasts:
+  audiobookshelf_metadata:
+  audiobookshelf_config:
+  vaultwarden_data:
+  deemix_downloads:
+  deemix_config:
+  transmission_data:
+  transmission_downloads:
+  transmission_watch:
+  pigallery2_photos:
+  pigallery2_config:
