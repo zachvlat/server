@@ -32,6 +32,9 @@ services:
       - nextcloud_appdata:/config
       - nextcloud_data:/data
       - /srv/media/photos:/photos
+    ports:
+      - 8080:80
+      - 8443:443
     restart: always
 
   jellyfin:
@@ -45,6 +48,9 @@ services:
       - jellyfin_config:/config
       - /srv/media/Series:/data/tvshows
       - /srv/media/Movies/complete:/data/movies
+    ports:
+      - 8096:8096
+      - 8920:8920
     restart: always
 
   portainer:
@@ -131,21 +137,3 @@ services:
       - /srv/media/myphotos:/app/data/photos
       - pigallery2_config:/app/data/config
     restart: always
-
-volumes:
-  filebrowser_data:
-  filebrowser_config:
-  nginx_data:
-  nginx_letsencrypt:
-  nextcloud_appdata:
-  nextcloud_data:
-  jellyfin_config:
-  navidrome_data:
-  audiobookshelf_podcasts:
-  audiobookshelf_metadata:
-  audiobookshelf_config:
-  vaultwarden_data:
-  deemix_config:
-  transmission_data:
-  transmission_watch:
-  pigallery2_config:
