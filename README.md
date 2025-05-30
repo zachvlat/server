@@ -9,6 +9,7 @@ This project is aimed at creating a comprehensive server setup for various purpo
 
 # DISCLAIMER!
 All the ports I 'm using on the yml files are according to MY needs. You have to check for yourself with docker ps to see what ports can or cannot use. The same goes with the volume paths I chose etc... Check it, before you wreck it!
+Also check out the volume paths for your needs. For example, about pigallery2 this path `pigallery2_photos`:/app/data/photos will fetch the photos on this folder. You might want to switch to an other folder.
 
 ## Table of Contents
 - [Server Project](#server-project)
