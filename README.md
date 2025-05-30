@@ -54,12 +54,14 @@ Before you start, make sure you have the following prerequisites installed on yo
 
 ## Services
 
-1. [Nextcloud](https://nextcloud.com/)
-2. [Home Assistant](https://www.home-assistant.io/)
-3. [Jellyfin](https://jellyfin.org/)
-4. [Transmission](https://transmissionbt.com/)
-5. [Deemix](https://deemix.app/)
-6. [Navidrome](https://www.navidrome.org/)
-7. [Portainer](https://www.portainer.io/)
+1. [Nextcloud](https://nextcloud.com)
+2. [Home Assistant](https://www.home-assistant.io)
+3. [Jellyfin](https://jellyfin.org)
+4. [Transmission](https://transmissionbt.com)
+5. [Deemix](https://deemix.app)
+6. [Navidrome](https://www.navidrome.org)
+7. [Portainer](https://www.portainer.io)
 8. [Audiobookshelf](https://github.com/Synthetica9/Audiobookshelf)
 9. [Vaultwarden](https://github.com/dani-garcia/vaultwarden)
+10. [PiGallery2](https://bpatrik.github.io/pigallery2)
+11. [NGINX Proxy Manager](https://nginxproxymanager.com)
