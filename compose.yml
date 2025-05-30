@@ -25,7 +25,7 @@ services:
       - nginx_letsencrypt:/etc/letsencrypt
     networks:
       - nginx_network
-    restart: unless-stopped
+    restart: always
 
   nextcloud:
     image: lscr.io/linuxserver/nextcloud:latest
@@ -40,6 +40,8 @@ services:
       - nextcloud_photos:/photos
     networks:
       - nginx_network
+    ports:
+      - 8081:80
     restart: always
 
   jellyfin:
@@ -112,7 +114,7 @@ services:
       - vaultwarden_data:/data
     networks:
       - nginx_network
-    restart: unless-stopped
+    restart: always
 
   deemix:
     image: registry.gitlab.com/bockiii/deemix-docker
@@ -153,7 +155,7 @@ services:
     image: bpatrik/pigallery2
     container_name: pigallery2
     ports:
-      - 8082:80  # Changed to avoid conflict with Nextcloud
+      - 8082:80
     environment:
       - NODE_ENV=production
     volumes:
@@ -161,6 +163,18 @@ services:
       - pigallery2_config:/app/data/config
     networks:
       - nginx_network
+    restart: always
+    
+  homeassistant:
+    container_name: homeassistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    volumes:
+      - homeassistant_config:/config
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - nginx_network
+    ports:
+      - 8123:8123
     restart: always
 
 volumes:
@@ -188,6 +202,7 @@ volumes:
   transmission_watch:
   pigallery2_photos:
   pigallery2_config:
+  homeassistant_config:
 
 networks:
   nginx_network:
