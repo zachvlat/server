@@ -1,19 +1,21 @@
-#version: "3.1"
+version: "3.8"
 
 services:
   filebrowser:
     image: hurlenko/filebrowser
+    container_name: filebrowser
     ports:
       - 8188:8080
     volumes:
       - filebrowser_data:/data
       - filebrowser_config:/config
+    networks:
+      - nginx_network
     restart: always
 
   nginxproxymanager:
-    image: "jc21/nginx-proxy-manager:latest"
+    image: jc21/nginx-proxy-manager:latest
     container_name: nginxproxymanager
-    restart: unless-stopped
     ports:
       - "80:80"
       - "81:81"
@@ -21,6 +23,9 @@ services:
     volumes:
       - nginx_data:/data
       - nginx_letsencrypt:/etc/letsencrypt
+    networks:
+      - nginx_network
+    restart: unless-stopped
 
   nextcloud:
     image: lscr.io/linuxserver/nextcloud:latest
@@ -33,9 +38,8 @@ services:
       - nextcloud_appdata:/config
       - nextcloud_data:/data
       - nextcloud_photos:/photos
-    ports:
-      - 8080:80
-      - 8443:443
+    networks:
+      - nginx_network
     restart: always
 
   jellyfin:
@@ -52,6 +56,8 @@ services:
     ports:
       - 8096:8096
       - 8920:8920
+    networks:
+      - nginx_network
     restart: always
 
   portainer:
@@ -59,26 +65,33 @@ services:
     container_name: portainer
     command: -H unix:///var/run/docker.sock
     ports:
-      - '9000:9000'
+      - "9000:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - nginx_network
     restart: always
 
   navidrome:
     image: deluan/navidrome:latest
+    container_name: navidrome
     ports:
       - "4533:4533"
     environment:
-      ND_SCANSCHEDULE: 1h
-      ND_LOGLEVEL: info  
-      ND_SESSIONTIMEOUT: 24h
-      ND_BASEURL: ""
+      - ND_SCANSCHEDULE=1h
+      - ND_LOGLEVEL=info
+      - ND_SESSIONTIMEOUT=24h
+      - ND_BASEURL=""
     volumes:
       - navidrome_data:/data
       - navidrome_music:/music:ro
+    networks:
+      - nginx_network
+    restart: always
 
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf
+    container_name: audiobookshelf
     ports:
       - 13378:80
     volumes:
@@ -86,29 +99,36 @@ services:
       - audiobookshelf_podcasts:/podcasts
       - audiobookshelf_metadata:/metadata
       - audiobookshelf_config:/config
+    networks:
+      - nginx_network
     restart: always
 
   vaultwarden:
     image: vaultwarden/server:latest
     container_name: vaultwarden
-    restart: unless-stopped
     ports:
       - 9445:80
     volumes:
       - vaultwarden_data:/data
+    networks:
+      - nginx_network
+    restart: unless-stopped
 
   deemix:
     image: registry.gitlab.com/bockiii/deemix-docker
-    container_name: Deemix
-    volumes:
-      - deemix_downloads:/downloads
-      - deemix_config:/config
+    container_name: deemix
+    ports:
+      - 6595:6595
     environment:
       - PUID=1000
       - PGID=1000
       - UMASK_SET=022
-    ports:
-      - 6595:6595
+    volumes:
+      - deemix_downloads:/downloads
+      - deemix_config:/config
+    networks:
+      - nginx_network
+    restart: always
 
   transmission:
     image: lscr.io/linuxserver/transmission:latest
@@ -125,18 +145,22 @@ services:
       - 9091:9091
       - 51413:51413
       - 51413:51413/udp
+    networks:
+      - nginx_network
     restart: always
 
   pigallery2:
     image: bpatrik/pigallery2
     container_name: pigallery2
     ports:
-      - 8081:80
+      - 8082:80  # Changed to avoid conflict with Nextcloud
     environment:
       - NODE_ENV=production
     volumes:
       - pigallery2_photos:/app/data/photos
       - pigallery2_config:/app/data/config
+    networks:
+      - nginx_network
     restart: always
 
 volumes:
@@ -164,3 +188,7 @@ volumes:
   transmission_watch:
   pigallery2_photos:
   pigallery2_config:
+
+networks:
+  nginx_network:
+    driver: bridge
