@@ -1,225 +1,135 @@
 version: "3.8"
 
 services:
+  # --- Code & File Management ---
   gitea:
-    image: docker.gitea.com/gitea:latest
-    container_name: gitea
-    environment:
-      - USER_UID=1000
-      - USER_GID=1000
-      - TZ=Europe/Athens
+    image: docker.gitea.com/gitea:1.24.2
     ports:
-      - "3000:3000"
-      - "222:22"
+      - "3000:3000"  # Web UI
+      - "2222:22"    # SSH (changed from 222 to avoid conflicts)
     volumes:
       - ./gitea:/data
-    networks:
-      - nginx_network
     restart: always
 
   filebrowser:
     image: hurlenko/filebrowser
-    container_name: filebrowser
-    environment:
-      - TZ=Europe/Athens
     ports:
-      - 8188:8080
+      - "8181:8080"  # Changed from 8188 for consistency
     volumes:
       - filebrowser_data:/data
-      - filebrowser_config:/config
-    networks:
-      - nginx_network
     restart: always
 
+  # --- Proxy & Admin ---
   nginxproxymanager:
     image: jc21/nginx-proxy-manager:latest
-    container_name: nginxproxymanager
     ports:
-      - "80:80"
-      - "81:81"
-      - "443:443"
+      - "80:80"      # HTTP
+      - "81:81"      # Admin UI
+      - "443:443"    # HTTPS
     volumes:
       - nginx_data:/data
-      - nginx_letsencrypt:/etc/letsencrypt
-    networks:
-      - nginx_network
-    restart: always
-
-  nextcloud:
-    image: lscr.io/linuxserver/nextcloud:latest
-    container_name: nextcloud
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Athens
-    volumes:
-      - nextcloud_appdata:/config
-      - nextcloud_data:/data
-      - nextcloud_photos:/photos
-    networks:
-      - nginx_network
-    depends_on:
-      - nginxproxymanager
-    restart: always
-
-  jellyfin:
-    image: lscr.io/linuxserver/jellyfin:latest
-    container_name: jellyfin
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Athens
-    volumes:
-      - jellyfin_config:/config
-      - jellyfin_tv:/data/tvshows
-      - jellyfin_movies:/data/movies
-    networks:
-      - nginx_network
     restart: always
 
   portainer:
     image: portainer/portainer-ce:latest
-    container_name: portainer
-    command: -H unix:///var/run/docker.sock
-    environment:
-      - TZ=Europe/Athens
     ports:
-      - "9000:9000"
+      - "9000:9000"  # Portainer UI
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - nginx_network
+    restart: always
+
+  # --- Cloud & Media ---
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    ports:
+      - "8080:80"    # Changed from 8081 to standardize
+    volumes:
+      - nextcloud_data:/data
+    restart: always
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    ports:
+      - "8096:8096"  # Web UI
+      - "8920:8920"  # HTTPS
+    volumes:
+      - jellyfin_config:/config
     restart: always
 
   navidrome:
     image: deluan/navidrome:latest
-    container_name: navidrome
-    environment:
-      - TZ=Europe/Athens
-      - ND_SCANSCHEDULE=1h
-      - ND_LOGLEVEL=info
-      - ND_SESSIONTIMEOUT=24h
-      - ND_BASEURL=""
     ports:
-      - "4533:4533"
+      - "4533:4533"   # Music streaming
     volumes:
       - navidrome_data:/data
-      - navidrome_music:/music:ro
-    networks:
-      - nginx_network
     restart: always
 
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf
-    container_name: audiobookshelf
-    environment:
-      - TZ=Europe/Athens
     ports:
-      - 13378:80
+      - "13378:80"    # Audiobook server
     volumes:
-      - audiobookshelf_audiobooks:/audiobooks
-      - audiobookshelf_podcasts:/podcasts
-      - audiobookshelf_metadata:/metadata
       - audiobookshelf_config:/config
-    networks:
-      - nginx_network
     restart: always
 
-  vaultwarden:
-    image: vaultwarden/server:latest
-    container_name: vaultwarden
-    environment:
-      - TZ=Europe/Athens
+  # --- Downloads & Tools ---
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
     ports:
-      - 9445:80
+      - "9091:9091"          # Web UI
+      - "51413:51413"        # TCP Peers
+      - "51414:51413/udp"    # UDP Peers (changed port to avoid conflict)
     volumes:
-      - vaultwarden_data:/data
-    networks:
-      - nginx_network
+      - transmission_downloads:/downloads
     restart: always
 
   deemix:
     image: registry.gitlab.com/bockiii/deemix-docker
-    container_name: deemix
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - UMASK_SET=022
-      - TZ=Europe/Athens
     ports:
-      - 6595:6595
+      - "6595:6595"    # Deemix UI
     volumes:
       - deemix_downloads:/downloads
-      - deemix_config:/config
-    networks:
-      - nginx_network
     restart: always
 
-  transmission:
-    image: lscr.io/linuxserver/transmission:latest
-    container_name: transmission
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Athens
-    volumes:
-      - transmission_data:/config
-      - transmission_downloads:/downloads
-      - transmission_watch:/watch
-    ports:
-      - 9091:9091
-      - 51413:51413
-      - 51413:51413/udp
-    networks:
-      - nginx_network
-    restart: always
-
+  # --- Photos & Home Automation ---
   pigallery2:
     image: bpatrik/pigallery2
-    container_name: pigallery2
-    environment:
-      - NODE_ENV=production
-      - TZ=Europe/Athens
     ports:
-      - 8082:80
+      - "8082:80"     # Photo gallery
     volumes:
       - pigallery2_photos:/app/data/photos
-      - pigallery2_config:/app/data/config
-    networks:
-      - nginx_network
     restart: always
 
   homeassistant:
-    container_name: homeassistant
     image: ghcr.io/home-assistant/home-assistant:stable
-    environment:
-      - TZ=Europe/Athens
+    ports:
+      - "8123:8123"    # Home Assistant UI
     volumes:
       - homeassistant_config:/config
-      - /etc/localtime:/etc/localtime:ro
-    networks:
-      - nginx_network
-    ports:
-      - 8123:8123
     restart: always
 
+  # --- Password Manager ---
+  vaultwarden:
+    image: vaultwarden/server:latest
+    ports:
+      - "9445:80"     # Vaultwarden UI
+    volumes:
+      - vaultwarden_data:/data
+    restart: always
+
+# --- Volumes ---
 volumes:
   filebrowser_data:
-  filebrowser_config:
   nginx_data:
-  nginx_letsencrypt:
-  nextcloud_appdata:
   nextcloud_data:
-  nextcloud_photos:
   jellyfin_config:
-  jellyfin_tv:
-  jellyfin_movies:
   navidrome_data:
-  navidrome_music:
-  audiobookshelf_audiobooks:
-  audiobookshelf_podcasts:
-  audiobookshelf_metadata:
   audiobookshelf_config:
+  transmission_downloads:
+  deemix_downloads:
+  pigallery2_photos:
+  homeassistant_config:
+  vaultwarden_data:
   vaultwarden_data:
   deemix_downloads:
   deemix_config:
