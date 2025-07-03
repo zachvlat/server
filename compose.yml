@@ -1,9 +1,27 @@
 version: "3.8"
 
 services:
+  gitea:
+    image: docker.gitea.com/gitea:1.24.2
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - TZ=Europe/Athens
+    ports:
+      - "3000:3000"
+      - "222:22"
+    volumes:
+      - ./gitea:/data
+    networks:
+      - nginx_network
+    restart: always
+
   filebrowser:
     image: hurlenko/filebrowser
     container_name: filebrowser
+    environment:
+      - TZ=Europe/Athens
     ports:
       - 8188:8080
     volumes:
@@ -40,8 +58,8 @@ services:
       - nextcloud_photos:/photos
     networks:
       - nginx_network
-    ports:
-      - 8081:80
+    depends_on:
+      - nginxproxymanager
     restart: always
 
   jellyfin:
@@ -55,9 +73,6 @@ services:
       - jellyfin_config:/config
       - jellyfin_tv:/data/tvshows
       - jellyfin_movies:/data/movies
-    ports:
-      - 8096:8096
-      - 8920:8920
     networks:
       - nginx_network
     restart: always
@@ -66,6 +81,8 @@ services:
     image: portainer/portainer-ce:latest
     container_name: portainer
     command: -H unix:///var/run/docker.sock
+    environment:
+      - TZ=Europe/Athens
     ports:
       - "9000:9000"
     volumes:
@@ -77,13 +94,14 @@ services:
   navidrome:
     image: deluan/navidrome:latest
     container_name: navidrome
-    ports:
-      - "4533:4533"
     environment:
+      - TZ=Europe/Athens
       - ND_SCANSCHEDULE=1h
       - ND_LOGLEVEL=info
       - ND_SESSIONTIMEOUT=24h
       - ND_BASEURL=""
+    ports:
+      - "4533:4533"
     volumes:
       - navidrome_data:/data
       - navidrome_music:/music:ro
@@ -94,6 +112,8 @@ services:
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf
     container_name: audiobookshelf
+    environment:
+      - TZ=Europe/Athens
     ports:
       - 13378:80
     volumes:
@@ -108,6 +128,8 @@ services:
   vaultwarden:
     image: vaultwarden/server:latest
     container_name: vaultwarden
+    environment:
+      - TZ=Europe/Athens
     ports:
       - 9445:80
     volumes:
@@ -119,12 +141,13 @@ services:
   deemix:
     image: registry.gitlab.com/bockiii/deemix-docker
     container_name: deemix
-    ports:
-      - 6595:6595
     environment:
       - PUID=1000
       - PGID=1000
       - UMASK_SET=022
+      - TZ=Europe/Athens
+    ports:
+      - 6595:6595
     volumes:
       - deemix_downloads:/downloads
       - deemix_config:/config
@@ -154,20 +177,23 @@ services:
   pigallery2:
     image: bpatrik/pigallery2
     container_name: pigallery2
-    ports:
-      - 8082:80
     environment:
       - NODE_ENV=production
+      - TZ=Europe/Athens
+    ports:
+      - 8082:80
     volumes:
       - pigallery2_photos:/app/data/photos
       - pigallery2_config:/app/data/config
     networks:
       - nginx_network
     restart: always
-    
+
   homeassistant:
     container_name: homeassistant
     image: ghcr.io/home-assistant/home-assistant:stable
+    environment:
+      - TZ=Europe/Athens
     volumes:
       - homeassistant_config:/config
       - /etc/localtime:/etc/localtime:ro
