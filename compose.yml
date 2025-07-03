@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   gitea:
-    image: docker.gitea.com/gitea:1.24.2
+    image: docker.gitea.com/gitea:latest
     container_name: gitea
     environment:
       - USER_UID=1000
