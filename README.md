@@ -65,3 +65,4 @@ Before you start, make sure you have the following prerequisites installed on yo
 9. [Vaultwarden](https://github.com/dani-garcia/vaultwarden)
 10. [PiGallery2](https://bpatrik.github.io/pigallery2)
 11. [NGINX Proxy Manager](https://nginxproxymanager.com)
+12. [Gitea](https://about.gitea.com/)
