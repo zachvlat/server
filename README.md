@@ -54,15 +54,16 @@ Before you start, make sure you have the following prerequisites installed on yo
 
 ## Services
 
-1. [Nextcloud](https://nextcloud.com)
-2. [Home Assistant](https://www.home-assistant.io)
-3. [Jellyfin](https://jellyfin.org)
-4. [Transmission](https://transmissionbt.com)
-5. [Deemix](https://deemix.app)
-6. [Navidrome](https://www.navidrome.org)
-7. [Portainer](https://www.portainer.io)
-8. [Audiobookshelf](https://github.com/Synthetica9/Audiobookshelf)
-9. [Vaultwarden](https://github.com/dani-garcia/vaultwarden)
-10. [PiGallery2](https://bpatrik.github.io/pigallery2)
-11. [NGINX Proxy Manager](https://nginxproxymanager.com)
-12. [Gitea](https://about.gitea.com/)
+1.  [Nextcloud](https://nextcloud.com) https://nextcloud:443
+2.  [Home Assistant](https://www.home-assistant.io)
+3.  [Jellyfin](https://jellyfin.org) http://jellyfin:8096
+4.  [Transmission](https://transmissionbt.com) http://transmission:9091
+5.  [Deemix](https://deemix.app) http://deemix:6595
+6.  [Navidrome](https://www.navidrome.org) http://navidrome:4533
+7.  [Portainer](https://www.portainer.io) http://portainer:9000
+8.  [Audiobookshelf](https://github.com/Synthetica9/Audiobookshelf) http://audiobookshelf:80
+9.  [Vaultwarden](https://github.com/dani-garcia/vaultwarden) http://vaultwarden:80
+10. [PiGallery2](https://bpatrik.github.io/pigallery2) http://pigallery2:80
+11. [NGINX Proxy Manager](https://nginxproxymanager.com) http://nginxproxymanager:81
+12. [Gitea](https://about.gitea.com/) http://gitea:3000
+13. [FileBrowser](https://filebrowser.org) http://filebrowser:8080
