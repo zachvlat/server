@@ -54,16 +54,17 @@ Before you start, make sure you have the following prerequisites installed on yo
 
 ## Services
 
-1.  [Nextcloud](https://nextcloud.com) https://nextcloud:443
-2.  [Home Assistant](https://www.home-assistant.io)
-3.  [Jellyfin](https://jellyfin.org) http://jellyfin:8096
-4.  [Transmission](https://transmissionbt.com) http://transmission:9091
-5.  [Deemix](https://deemix.app) http://deemix:6595
-6.  [Navidrome](https://www.navidrome.org) http://navidrome:4533
-7.  [Portainer](https://www.portainer.io) http://portainer:9000
-8.  [Audiobookshelf](https://github.com/Synthetica9/Audiobookshelf) http://audiobookshelf:80
-9.  [Vaultwarden](https://github.com/dani-garcia/vaultwarden) http://vaultwarden:80
-10. [PiGallery2](https://bpatrik.github.io/pigallery2) http://pigallery2:80
-11. [NGINX Proxy Manager](https://nginxproxymanager.com) http://nginxproxymanager:81
-12. [Gitea](https://about.gitea.com/) http://gitea:3000
-13. [FileBrowser](https://filebrowser.org) http://filebrowser:8080
+1.  [Nextcloud](https://nextcloud.com) [https://nextcloud:443](https://nextcloud:443)
+2.  [Home Assistant](https://www.home-assistant.io) [http://home-assistant:8123](http://home-assistant:8123)
+3.  [Jellyfin](https://jellyfin.org) [http://jellyfin:8096](http://jellyfin:8096)
+4.  [Transmission](https://transmissionbt.com) [http://transmission:9091](http://transmission:9091)
+5.  [Deemix](https://deemix.app) [http://deemix:6595](http://deemix:6595)
+6.  [Navidrome](https://www.navidrome.org) [http://navidrome:4533](http://navidrome:4533)
+7.  [Portainer](https://www.portainer.io) [http://portainer:9000](http://portainer:9000)
+8.  [Audiobookshelf](https://github.com/Synthetica9/Audiobookshelf) [http://audiobookshelf:80](http://audiobookshelf:80)
+9.  [Vaultwarden](https://github.com/dani-garcia/vaultwarden) [http://vaultwarden:80](http://vaultwarden:80)
+10. [PiGallery2](https://bpatrik.github.io/pigallery2) [http://pigallery2:80](http://pigallery2:80)
+11. [NGINX Proxy Manager](https://nginxproxymanager.com) [http://nginxproxymanager:81](http://nginxproxymanager:81)
+12. [Gitea](https://about.gitea.com/) [http://gitea:3000](http://gitea:3000)
+13. [FileBrowser](https://filebrowser.org) [http://filebrowser:8080](http://filebrowser:8080)
+14. [Pinepods](https://www.pinepods.online) [http://pinepods:](http://pinepods:8040)
