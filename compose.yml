@@ -3,10 +3,10 @@ version: "3.8"
 services:
   # --- Code & File Management ---
   gitea:
-    image: docker.gitea.com/gitea:1.24.2
+    image: docker.gitea.com/gitea:latest
     ports:
-      - "3000:3000"  # Web UI
-      - "2222:22"    # SSH (changed from 222 to avoid conflicts)
+      - "3000:3000"
+      - "2222:22"
     volumes:
       - ./gitea:/data
     restart: always
@@ -14,7 +14,7 @@ services:
   filebrowser:
     image: hurlenko/filebrowser
     ports:
-      - "8181:8080"  # Changed from 8188 for consistency
+      - "8181:8080"
     volumes:
       - filebrowser_data:/data
     restart: always
@@ -23,9 +23,9 @@ services:
   nginxproxymanager:
     image: jc21/nginx-proxy-manager:latest
     ports:
-      - "80:80"      # HTTP
-      - "81:81"      # Admin UI
-      - "443:443"    # HTTPS
+      - "80:80"
+      - "81:81"
+      - "443:443"
     volumes:
       - nginx_data:/data
     restart: always
@@ -33,7 +33,7 @@ services:
   portainer:
     image: portainer/portainer-ce:latest
     ports:
-      - "9000:9000"  # Portainer UI
+      - "9000:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
@@ -42,7 +42,7 @@ services:
   nextcloud:
     image: lscr.io/linuxserver/nextcloud:latest
     ports:
-      - "8080:80"    # Changed from 8081 to standardize
+      - "8080:80"
     volumes:
       - nextcloud_data:/data
     restart: always
@@ -50,8 +50,8 @@ services:
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:latest
     ports:
-      - "8096:8096"  # Web UI
-      - "8920:8920"  # HTTPS
+      - "8096:8096"
+      - "8920:8920"
     volumes:
       - jellyfin_config:/config
     restart: always
@@ -59,7 +59,7 @@ services:
   navidrome:
     image: deluan/navidrome:latest
     ports:
-      - "4533:4533"   # Music streaming
+      - "4533:4533"
     volumes:
       - navidrome_data:/data
     restart: always
@@ -67,7 +67,7 @@ services:
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf
     ports:
-      - "13378:80"    # Audiobook server
+      - "13378:80"
     volumes:
       - audiobookshelf_config:/config
     restart: always
@@ -76,9 +76,9 @@ services:
   transmission:
     image: lscr.io/linuxserver/transmission:latest
     ports:
-      - "9091:9091"          # Web UI
-      - "51413:51413"        # TCP Peers
-      - "51414:51413/udp"    # UDP Peers (changed port to avoid conflict)
+      - "9091:9091"
+      - "51413:51413"
+      - "51414:51413/udp"
     volumes:
       - transmission_downloads:/downloads
     restart: always
@@ -86,7 +86,7 @@ services:
   deemix:
     image: registry.gitlab.com/bockiii/deemix-docker
     ports:
-      - "6595:6595"    # Deemix UI
+      - "6595:6595"
     volumes:
       - deemix_downloads:/downloads
     restart: always
@@ -95,7 +95,7 @@ services:
   pigallery2:
     image: bpatrik/pigallery2
     ports:
-      - "8082:80"     # Photo gallery
+      - "8082:80"
     volumes:
       - pigallery2_photos:/app/data/photos
     restart: always
@@ -103,7 +103,7 @@ services:
   homeassistant:
     image: ghcr.io/home-assistant/home-assistant:stable
     ports:
-      - "8123:8123"    # Home Assistant UI
+      - "8123:8123"
     volumes:
       - homeassistant_config:/config
     restart: always
@@ -112,10 +112,69 @@ services:
   vaultwarden:
     image: vaultwarden/server:latest
     ports:
-      - "9445:80"     # Vaultwarden UI
+      - "9445:80"
     volumes:
       - vaultwarden_data:/data
     restart: always
+
+  # --- Pinepods Stack ---
+  pinepods-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: pinepods_database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: myS3curepass
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./pinepods/pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    restart: always
+    networks:
+      - nginx_network
+
+  pinepods-valkey:
+    image: valkey/valkey:8-alpine
+    ports:
+      - "6378:6379"
+    restart: always
+    networks:
+      - nginx_network
+
+  pinepods:
+    image: madeofpendletonwool/pinepods:latest
+    ports:
+      - "8040:8040"
+    environment:
+      HOSTNAME: 'http://localhost:8040'
+      SEARCH_API_URL: 'https://search.pinepods.online/api/search'
+      PEOPLE_API_URL: 'https://people.pinepods.online'
+      DB_TYPE: postgresql
+      DB_HOST: pinepods-db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: myS3curepass
+      DB_NAME: pinepods_database
+      VALKEY_HOST: pinepods-valkey
+      VALKEY_PORT: 6379
+      PUID: 1000
+      PGID: 1000
+      TZ: "Europe/Athens"
+      USERNAME: admin
+      PASSWORD: admin
+      FULLNAME: admin
+      EMAIL: admin@admin.com
+    volumes:
+      - ./pinepods/downloads:/opt/pinepods/downloads
+      - ./pinepods/backups:/opt/pinepods/backups
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    depends_on:
+      - pinepods-db
+      - pinepods-valkey
+    restart: always
+    networks:
+      - nginx_network
 
 # --- Volumes ---
 volumes:
@@ -130,15 +189,6 @@ volumes:
   pigallery2_photos:
   homeassistant_config:
   vaultwarden_data:
-  vaultwarden_data:
-  deemix_downloads:
-  deemix_config:
-  transmission_data:
-  transmission_downloads:
-  transmission_watch:
-  pigallery2_photos:
-  pigallery2_config:
-  homeassistant_config:
 
 networks:
   nginx_network:
