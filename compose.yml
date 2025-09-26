@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   gitea:
+    container_name: gitea
     image: docker.gitea.com/gitea:latest
     ports:
       - "3000:3000"
@@ -11,6 +12,7 @@ services:
     restart: always
 
   filebrowser:
+    container_name: filebrowser
     image: hurlenko/filebrowser
     ports:
       - "8181:8080"
@@ -19,6 +21,7 @@ services:
     restart: always
 
   nginxproxymanager:
+    container_name: nginxproxymanager
     image: jc21/nginx-proxy-manager:latest
     ports:
       - "80:80"
@@ -29,6 +32,7 @@ services:
     restart: always
 
   portainer:
+    container_name: portainer
     image: portainer/portainer-ce:latest
     ports:
       - "9000:9000"
@@ -37,6 +41,7 @@ services:
     restart: always
 
   nextcloud:
+    container_name: nextcloud
     image: lscr.io/linuxserver/nextcloud:latest
     ports:
       - "8080:80"
@@ -45,6 +50,7 @@ services:
     restart: always
 
   jellyfin:
+    container_name: jellyfin
     image: lscr.io/linuxserver/jellyfin:latest
     ports:
       - "8096:8096"
@@ -54,6 +60,7 @@ services:
     restart: always
 
   navidrome:
+    container_name: navidrome
     image: deluan/navidrome:latest
     ports:
       - "4533:4533"
@@ -62,6 +69,7 @@ services:
     restart: always
 
   audiobookshelf:
+    container_name: audiobookshelf
     image: ghcr.io/advplyr/audiobookshelf
     ports:
       - "13378:80"
@@ -70,6 +78,7 @@ services:
     restart: always
 
   transmission:
+    container_name: transmission
     image: lscr.io/linuxserver/transmission:latest
     ports:
       - "9091:9091"
@@ -80,6 +89,7 @@ services:
     restart: always
 
   deemix:
+    container_name: deemix
     image: registry.gitlab.com/bockiii/deemix-docker
     ports:
       - "6595:6595"
@@ -88,6 +98,7 @@ services:
     restart: always
 
   pigallery2:
+    container_name: pigallery2
     image: bpatrik/pigallery2
     ports:
       - "8082:80"
@@ -96,6 +107,7 @@ services:
     restart: always
 
   homeassistant:
+    container_name: homeassistant
     image: ghcr.io/home-assistant/home-assistant:stable
     ports:
       - "8123:8123"
@@ -104,6 +116,7 @@ services:
     restart: always
 
   vaultwarden:
+    container_name: vaultwarden
     image: vaultwarden/server:latest
     ports:
       - "9445:80"
@@ -112,6 +125,7 @@ services:
     restart: always
 
   pinepods-db:
+    container_name: pinepods-db
     image: postgres:latest
     environment:
       POSTGRES_DB: pinepods_database
@@ -127,6 +141,7 @@ services:
       - nginx_network
 
   pinepods-valkey:
+    container_name: pinepods-valkey
     image: valkey/valkey:8-alpine
     ports:
       - "6378:6379"
@@ -135,6 +150,7 @@ services:
       - nginx_network
 
   pinepods:
+    container_name: pinepods
     image: madeofpendletonwool/pinepods:latest
     ports:
       - "8040:8040"
