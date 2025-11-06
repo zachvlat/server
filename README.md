@@ -68,3 +68,4 @@ Before you start, make sure you have the following prerequisites installed on yo
 12. [Gitea](https://about.gitea.com/) [http://gitea:3000](http://gitea:3000)
 13. [FileBrowser](https://filebrowser.org) [http://filebrowser:8080](http://filebrowser:8080)
 14. [Pinepods](https://www.pinepods.online) [http://pinepods:8040](http://pinepods:8040)
+15. [JDownloader](https://jdownloader.org/) [http://jdownloader-2:5800](http://jdownloader-2:5800)
