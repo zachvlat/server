@@ -9,7 +9,11 @@ services:
       - "2222:22"
     volumes:
       - ./gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     restart: always
+    networks:
+      - nginx_network
 
   filebrowser:
     container_name: filebrowser
@@ -17,8 +21,11 @@ services:
     ports:
       - "8181:8080"
     volumes:
-      - filebrowser_data:/data
+      - /:/data
+      - ./filebrowser/config:/config
     restart: always
+    networks:
+      - nginx_network
 
   nginxproxymanager:
     container_name: nginxproxymanager
@@ -28,8 +35,11 @@ services:
       - "81:81"
       - "443:443"
     volumes:
-      - nginx_data:/data
+      - ./nginx/data:/data
+      - ./nginx/letsencrypt:/etc/letsencrypt
     restart: always
+    networks:
+      - nginx_network
 
   portainer:
     container_name: portainer
@@ -39,15 +49,25 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: always
+    networks:
+      - nginx_network
 
   nextcloud:
     container_name: nextcloud
     image: lscr.io/linuxserver/nextcloud:latest
     ports:
       - "8080:80"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Athens
     volumes:
-      - nextcloud_data:/data
+      - ./nextcloud/appdata:/config
+      - ./nextcloud/data:/data
+      - /mnt/$YOURDRIVE/Camera Uploads:/photos
     restart: always
+    networks:
+      - nginx_network
 
   jellyfin:
     container_name: jellyfin
@@ -55,18 +75,34 @@ services:
     ports:
       - "8096:8096"
       - "8920:8920"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Athens
     volumes:
-      - jellyfin_config:/config
+      - ./jellyfin/config:/config
+      - /mnt/$YOURDRIVE2/series:/data/tvshows
+      - /mnt/$YOURDRIVE2/anime:/data/anime
+      - /mnt/$YOURDRIVE/Movies/complete:/data/movies
     restart: always
+    networks:
+      - nginx_network
 
   navidrome:
     container_name: navidrome
     image: deluan/navidrome:latest
     ports:
       - "4533:4533"
+    environment:
+      ND_SCANSCHEDULE: 1h
+      ND_LOGLEVEL: info
+      ND_SESSIONTIMEOUT: 24h
     volumes:
-      - navidrome_data:/data
+      - ./navidrome/data:/data
+      - /mnt/$YOURDRIVE/$YOURPATH/Music:/music:ro
     restart: always
+    networks:
+      - nginx_network
 
   audiobookshelf:
     container_name: audiobookshelf
@@ -74,37 +110,62 @@ services:
     ports:
       - "13378:80"
     volumes:
-      - audiobookshelf_config:/config
+      - /mnt/$YOURDRIVE/$YOURPATH/AudioBooks:/audiobooks
+      - ./audiobookshelf/podcasts:/podcasts
+      - ./audiobookshelf/metadata:/metadata
+      - ./audiobookshelf/config:/config
     restart: always
+    networks:
+      - nginx_network
 
   transmission:
     container_name: transmission
     image: lscr.io/linuxserver/transmission:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Athens
     ports:
       - "9091:9091"
       - "51413:51413"
-      - "51414:51413/udp"
+      - "51413:51413/udp"
     volumes:
-      - transmission_downloads:/downloads
+      - ./transmission/data:/config
+      - /mnt/$YOURDRIVE/Movies:/downloads
+      - ./transmission/watch:/watch
     restart: always
+    networks:
+      - nginx_network
 
   deemix:
     container_name: deemix
     image: registry.gitlab.com/bockiii/deemix-docker
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK_SET=022
     ports:
       - "6595:6595"
     volumes:
-      - deemix_downloads:/downloads
+      - /mnt/$YOURDRIVE/$YOURPATH/Music:/downloads
+      - ./deemix/config:/config
     restart: always
+    networks:
+      - nginx_network
 
   pigallery2:
     container_name: pigallery2
     image: bpatrik/pigallery2
     ports:
       - "8082:80"
+    environment:
+      - NODE_ENV=production
     volumes:
-      - pigallery2_photos:/app/data/photos
+      - /mnt/$YOURDRIVE/Camera Uploads:/app/data/photos
+      - ./pigallery2/config:/app/data/config
     restart: always
+    networks:
+      - nginx_network
 
   homeassistant:
     container_name: homeassistant
@@ -114,6 +175,8 @@ services:
     volumes:
       - homeassistant_config:/config
     restart: always
+    networks:
+      - nginx_network
 
   vaultwarden:
     container_name: vaultwarden
@@ -121,12 +184,14 @@ services:
     ports:
       - "9445:80"
     volumes:
-      - vaultwarden_data:/data
+      - ./bitwarden:/data
     restart: always
+    networks:
+      - nginx_network
 
   pinepods-db:
     container_name: pinepods-db
-    image: postgres:latest
+    image: postgres:17
     environment:
       POSTGRES_DB: pinepods_database
       POSTGRES_USER: postgres
@@ -169,10 +234,10 @@ services:
       PUID: 1000
       PGID: 1000
       TZ: "Europe/Athens"
-      USERNAME: admin
-      PASSWORD: admin
-      FULLNAME: admin
-      EMAIL: admin@admin.com
+      USERNAME: pinepods
+      PASSWORD: password
+      FULLNAME: John Pinepods
+      EMAIL: john@pinepods.com
     volumes:
       - ./pinepods/downloads:/opt/pinepods/downloads
       - ./pinepods/backups:/opt/pinepods/backups
@@ -185,18 +250,20 @@ services:
     networks:
       - nginx_network
 
+  jdownloader-2:
+    container_name: jdownloader-2
+    image: jlesage/jdownloader-2
+    ports:
+      - "5800:5800"
+    volumes:
+      - ./jdownloader/config:/config
+      - /mnt/$YOURDRIVE/Downloads:/output
+    restart: always
+    networks:
+      - nginx_network
+
 volumes:
-  filebrowser_data:
-  nginx_data:
-  nextcloud_data:
-  jellyfin_config:
-  navidrome_data:
-  audiobookshelf_config:
-  transmission_downloads:
-  deemix_downloads:
-  pigallery2_photos:
   homeassistant_config:
-  vaultwarden_data:
 
 networks:
   nginx_network:
