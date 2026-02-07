@@ -140,7 +140,7 @@ services:
 
   deemix:
     container_name: deemix
-    image: registry.gitlab.com/bockiii/deemix-docker
+    image: ghcr.io/bambanah/deemix:latest
     environment:
       - PUID=1000
       - PGID=1000
