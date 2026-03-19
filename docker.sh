@@ -1,12 +1,6 @@
 #!/bin/bash
 set -e
 
-# Check internet
-if ! curl -s --head https://github.com/ | grep "200 OK" > /dev/null; then
-  echo "You are offline. Connect to the internet and rerun."
-  exit 1
-fi
-
 sudo apt update
 sudo apt -y install ca-certificates curl gnupg lsb-release
 
