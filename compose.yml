@@ -1,7 +1,9 @@
 services:
+
   gitea:
     container_name: gitea
     image: docker.gitea.com/gitea:latest
+    user: "0:0"
     ports:
       - "3000:3000"
       - "2222:22"
@@ -9,7 +11,9 @@ services:
       - ./gitea:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    restart: always
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
@@ -20,15 +24,18 @@ services:
     ports:
       - "8181:8080"
     volumes:
-      - /:/data
+      - /mnt:/data
       - ./filebrowser/config:/config
-    restart: always
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
   nginxproxymanager:
     container_name: nginxproxymanager
     image: jc21/nginx-proxy-manager:latest
+    user: "0:0"
     ports:
       - "80:80"
       - "81:81"
@@ -36,24 +43,27 @@ services:
     volumes:
       - ./nginx/data:/data
       - ./nginx/letsencrypt:/etc/letsencrypt
-    restart: always
+    restart: unless-stopped
     networks:
       - nginx_network
 
   portainer:
     container_name: portainer
     image: portainer/portainer-ce:latest
+    user: "0:0"
     ports:
       - "9000:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    restart: always
+      - ./portainer/data:/data
+    restart: unless-stopped
     networks:
       - nginx_network
 
   nextcloud:
     container_name: nextcloud
     image: lscr.io/linuxserver/nextcloud:latest
+    user: "1000:1000"
     ports:
       - "8080:80"
     environment:
@@ -63,14 +73,17 @@ services:
     volumes:
       - ./nextcloud/appdata:/config
       - ./nextcloud/data:/data
-      - /mnt/$YOURDRIVE/Camera Uploads:/photos
-    restart: always
+      - /mnt/${YOURDRIVE}/Camera Uploads:/photos
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
   jellyfin:
     container_name: jellyfin
     image: lscr.io/linuxserver/jellyfin:latest
+    user: "1000:1000"
     ports:
       - "8096:8096"
       - "8920:8920"
@@ -80,16 +93,19 @@ services:
       - TZ=Europe/Athens
     volumes:
       - ./jellyfin/config:/config
-      - /mnt/$YOURDRIVE2/series:/data/tvshows
-      - /mnt/$YOURDRIVE2/anime:/data/anime
-      - /mnt/$YOURDRIVE/Movies/complete:/data/movies
-    restart: always
+      - /mnt/${YOURDRIVE2}/series:/data/tvshows
+      - /mnt/${YOURDRIVE2}/anime:/data/anime
+      - /mnt/${YOURDRIVE}/Movies/complete:/data/movies
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
   navidrome:
     container_name: navidrome
     image: deluan/navidrome:latest
+    user: "1000:1000"
     ports:
       - "4533:4533"
     environment:
@@ -98,28 +114,34 @@ services:
       ND_SESSIONTIMEOUT: 24h
     volumes:
       - ./navidrome/data:/data
-      - /mnt/$YOURDRIVE/$YOURPATH/Music:/music:ro
-    restart: always
+      - /mnt/${YOURDRIVE}/${YOURPATH}/Music:/music:ro
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
   audiobookshelf:
     container_name: audiobookshelf
     image: ghcr.io/advplyr/audiobookshelf
+    user: "1000:1000"
     ports:
       - "13378:80"
     volumes:
-      - /mnt/$YOURDRIVE/$YOURPATH/AudioBooks:/audiobooks
+      - /mnt/${YOURDRIVE}/${YOURPATH}/AudioBooks:/audiobooks
       - ./audiobookshelf/podcasts:/podcasts
       - ./audiobookshelf/metadata:/metadata
       - ./audiobookshelf/config:/config
-    restart: always
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
   transmission:
     container_name: transmission
     image: lscr.io/linuxserver/transmission:latest
+    user: "1000:1000"
     environment:
       - PUID=1000
       - PGID=1000
@@ -130,15 +152,18 @@ services:
       - "51413:51413/udp"
     volumes:
       - ./transmission/data:/config
-      - /mnt/$YOURDRIVE/Movies:/downloads
+      - /mnt/${YOURDRIVE}/Movies:/downloads
       - ./transmission/watch:/watch
-    restart: always
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
   deemix:
     container_name: deemix
     image: ghcr.io/bambanah/deemix:latest
+    user: "1000:1000"
     environment:
       - PUID=1000
       - PGID=1000
@@ -146,76 +171,85 @@ services:
     ports:
       - "6595:6595"
     volumes:
-      - /mnt/$YOURDRIVE/$YOURPATH/Music:/downloads
+      - /mnt/${YOURDRIVE}/${YOURPATH}/Music:/downloads
       - ./deemix/config:/config
-    restart: always
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
   pigallery2:
     container_name: pigallery2
     image: bpatrik/pigallery2
+    user: "1000:1000"
     ports:
       - "8082:80"
     environment:
       - NODE_ENV=production
     volumes:
-      - /mnt/$YOURDRIVE/Camera Uploads:/app/data/photos
+      - /mnt/${YOURDRIVE}/Camera Uploads:/app/data/photos
       - ./pigallery2/config:/app/data/config
-    restart: always
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
   homeassistant:
     container_name: homeassistant
     image: ghcr.io/home-assistant/home-assistant:stable
+    user: "0:0"
     ports:
       - "8123:8123"
     volumes:
       - homeassistant_config:/config
-    restart: always
+    restart: unless-stopped
+    privileged: true
     networks:
       - nginx_network
 
   vaultwarden:
     container_name: vaultwarden
     image: vaultwarden/server:latest
+    user: "0:0"
     ports:
       - "9445:80"
     volumes:
       - ./bitwarden:/data
-    restart: always
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
   pinepods-db:
     container_name: pinepods-db
     image: postgres:17
+    user: "0:0"
     environment:
       POSTGRES_DB: pinepods_database
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: myS3curepass
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - ./pinepods/pgdata:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
-    restart: always
+    restart: unless-stopped
     networks:
       - nginx_network
 
   pinepods-valkey:
     container_name: pinepods-valkey
     image: valkey/valkey:8-alpine
-    ports:
-      - "6378:6379"
-    restart: always
+    user: "0:0"
+    restart: unless-stopped
     networks:
       - nginx_network
 
   pinepods:
     container_name: pinepods
     image: madeofpendletonwool/pinepods:latest
+    user: "1000:1000"
     ports:
       - "8040:8040"
     environment:
@@ -226,17 +260,17 @@ services:
       DB_HOST: pinepods-db
       DB_PORT: 5432
       DB_USER: postgres
-      DB_PASSWORD: myS3curepass
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_NAME: pinepods_database
       VALKEY_HOST: pinepods-valkey
       VALKEY_PORT: 6379
       PUID: 1000
       PGID: 1000
-      TZ: "Europe/Athens"
-      USERNAME: admin
-      PASSWORD: admin
-      FULLNAME: admin admin
-      EMAIL: admin@admin.com
+      TZ: Europe/Athens
+      USERNAME: ${PINEPODS_USER}
+      PASSWORD: ${PINEPODS_PASSWORD}
+      FULLNAME: Admin
+      EMAIL: ${PINEPODS_EMAIL}
     volumes:
       - ./pinepods/downloads:/opt/pinepods/downloads
       - ./pinepods/backups:/opt/pinepods/backups
@@ -245,33 +279,41 @@ services:
     depends_on:
       - pinepods-db
       - pinepods-valkey
-    restart: always
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
   jdownloader-2:
     container_name: jdownloader-2
     image: jlesage/jdownloader-2
+    user: "1000:1000"
     ports:
       - "5800:5800"
     volumes:
       - ./jdownloader/config:/config
-      - /mnt/$YOURDRIVE/Downloads:/output
-    restart: always
+      - /mnt/${YOURDRIVE}/Downloads:/output
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
   owncast:
     container_name: owncast
     image: owncast/owncast:latest
+    user: "1000:1000"
     ports:
       - "1935:1935"
       - "8083:8080"
     volumes:
       - ./owncast/data:/app/data
     environment:
-      - OWNCAST_STREAM_KEY=admin
-    restart: always
+      - OWNCAST_STREAM_KEY=${OWNCAST_STREAM_KEY}
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
