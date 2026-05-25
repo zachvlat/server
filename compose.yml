@@ -1,9 +1,13 @@
+# =============================================================================
+#  #  Copy .env.example to .env and adjust the values before starting.
+# =============================================================================
+
 services:
 
   gitea:
     container_name: gitea
     image: docker.gitea.com/gitea:latest
-    user: "0:0"
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "3000:3000"
       - "2222:22"
@@ -20,11 +24,11 @@ services:
   filebrowser:
     container_name: filebrowser
     image: hurlenko/filebrowser
-    user: "1000:1000"
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "8181:8080"
     volumes:
-      - /mnt:/data
+      - ${FILEBROWSER_ROOT:-/}:/data
       - ./filebrowser/config:/config
     restart: unless-stopped
     security_opt:
@@ -35,7 +39,7 @@ services:
   nginxproxymanager:
     container_name: nginxproxymanager
     image: jc21/nginx-proxy-manager:latest
-    user: "0:0"
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "80:80"
       - "81:81"
@@ -50,7 +54,7 @@ services:
   portainer:
     container_name: portainer
     image: portainer/portainer-ce:latest
-    user: "0:0"
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "9000:9000"
     volumes:
@@ -63,17 +67,17 @@ services:
   nextcloud:
     container_name: nextcloud
     image: lscr.io/linuxserver/nextcloud:latest
-    user: "1000:1000"
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "8080:80"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Athens
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
     volumes:
       - ./nextcloud/appdata:/config
       - ./nextcloud/data:/data
-      - /mnt/${YOURDRIVE}/Camera Uploads:/photos
+      - ${PHOTOS_PATH:-/mnt/nvme/Camera Uploads}:/photos
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -83,19 +87,19 @@ services:
   jellyfin:
     container_name: jellyfin
     image: lscr.io/linuxserver/jellyfin:latest
-    user: "1000:1000"
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "8096:8096"
       - "8920:8920"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Athens
+      - PUID=${PUID:-0}
+      - PGID=${PGID:-0}
+      - TZ=${TZ:-Etc/UTC}
     volumes:
       - ./jellyfin/config:/config
-      - /mnt/${YOURDRIVE2}/series:/data/tvshows
-      - /mnt/${YOURDRIVE2}/anime:/data/anime
-      - /mnt/${YOURDRIVE}/Movies/complete:/data/movies
+      - ${TVSHOWS_PATH:-/mnt/ssd/series}:/data/tvshows
+      - ${ANIME_PATH:-/mnt/ssd/anime}:/data/anime
+      - ${MOVIES_PATH:-/mnt/nvme/Movies/complete}:/data/movies
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -105,7 +109,7 @@ services:
   navidrome:
     container_name: navidrome
     image: deluan/navidrome:latest
-    user: "1000:1000"
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "4533:4533"
     environment:
@@ -114,7 +118,7 @@ services:
       ND_SESSIONTIMEOUT: 24h
     volumes:
       - ./navidrome/data:/data
-      - /mnt/${YOURDRIVE}/${YOURPATH}/Music:/music:ro
+      - ${MUSIC_PATH:-/mnt/nvme/Zatsando/Music}:/music:ro
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -124,11 +128,11 @@ services:
   audiobookshelf:
     container_name: audiobookshelf
     image: ghcr.io/advplyr/audiobookshelf
-    user: "1000:1000"
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "13378:80"
     volumes:
-      - /mnt/${YOURDRIVE}/${YOURPATH}/AudioBooks:/audiobooks
+      - ${AUDIOBOOKS_PATH:-/mnt/nvme/Zatsando/AudioBooks}:/audiobooks
       - ./audiobookshelf/podcasts:/podcasts
       - ./audiobookshelf/metadata:/metadata
       - ./audiobookshelf/config:/config
@@ -141,18 +145,18 @@ services:
   transmission:
     container_name: transmission
     image: lscr.io/linuxserver/transmission:latest
-    user: "1000:1000"
+    user: "${PUID:-0}:${PGID:-0}"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Athens
+      - PUID=${PUID:-0}
+      - PGID=${PGID:-0}
+      - TZ=${TZ:-Etc/UTC}
     ports:
       - "9091:9091"
       - "51413:51413"
       - "51413:51413/udp"
     volumes:
       - ./transmission/data:/config
-      - /mnt/${YOURDRIVE}/Movies:/downloads
+      - ${DOWNLOADS_PATH:-/mnt/nvme/Downloads}:/downloads
       - ./transmission/watch:/watch
     restart: unless-stopped
     security_opt:
@@ -163,15 +167,15 @@ services:
   deemix:
     container_name: deemix
     image: ghcr.io/bambanah/deemix:latest
-    user: "1000:1000"
+    user: "${PUID:-0}:${PGID:-0}"
     environment:
-      - PUID=1000
-      - PGID=1000
+      - PUID=${PUID:-0}
+      - PGID=${PGID:-0}
       - UMASK_SET=022
     ports:
       - "6595:6595"
     volumes:
-      - /mnt/${YOURDRIVE}/${YOURPATH}/Music:/downloads
+      - ${MUSIC_PATH:-/mnt/nvme/Zatsando/Music}:/downloads
       - ./deemix/config:/config
     restart: unless-stopped
     security_opt:
@@ -182,13 +186,13 @@ services:
   pigallery2:
     container_name: pigallery2
     image: bpatrik/pigallery2
-    user: "1000:1000"
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "8082:80"
     environment:
       - NODE_ENV=production
     volumes:
-      - /mnt/${YOURDRIVE}/Camera Uploads:/app/data/photos
+      - ${PHOTOS_PATH:-/mnt/nvme/Camera Uploads}:/app/data/photos
       - ./pigallery2/config:/app/data/config
     restart: unless-stopped
     security_opt:
@@ -196,23 +200,10 @@ services:
     networks:
       - nginx_network
 
-  homeassistant:
-    container_name: homeassistant
-    image: ghcr.io/home-assistant/home-assistant:stable
-    user: "0:0"
-    ports:
-      - "8123:8123"
-    volumes:
-      - homeassistant_config:/config
-    restart: unless-stopped
-    privileged: true
-    networks:
-      - nginx_network
-
   vaultwarden:
     container_name: vaultwarden
     image: vaultwarden/server:latest
-    user: "0:0"
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "9445:80"
     volumes:
@@ -226,11 +217,11 @@ services:
   pinepods-db:
     container_name: pinepods-db
     image: postgres:17
-    user: "0:0"
+    user: "${PUID:-0}:${PGID:-0}"
     environment:
-      POSTGRES_DB: pinepods_database
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${PINEPODS_DB_NAME:-pinepods_database}
+      POSTGRES_USER: ${PINEPODS_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${PINEPODS_DB_PASSWORD:-changeme}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - ./pinepods/pgdata:/var/lib/postgresql/data
@@ -241,7 +232,7 @@ services:
   pinepods-valkey:
     container_name: pinepods-valkey
     image: valkey/valkey:8-alpine
-    user: "0:0"
+    user: "${PUID:-0}:${PGID:-0}"
     restart: unless-stopped
     networks:
       - nginx_network
@@ -249,33 +240,32 @@ services:
   pinepods:
     container_name: pinepods
     image: madeofpendletonwool/pinepods:latest
-    user: "1000:1000"
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "8040:8040"
     environment:
-      HOSTNAME: 'http://localhost:8040'
+      HOSTNAME: ${PINEPODS_HOSTNAME:-http://localhost:8040}
       SEARCH_API_URL: 'https://search.pinepods.online/api/search'
       PEOPLE_API_URL: 'https://people.pinepods.online'
       DB_TYPE: postgresql
       DB_HOST: pinepods-db
       DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
-      DB_NAME: pinepods_database
+      DB_USER: ${PINEPODS_DB_USER:-postgres}
+      DB_PASSWORD: ${PINEPODS_DB_PASSWORD:-changeme}
+      DB_NAME: ${PINEPODS_DB_NAME:-pinepods_database}
       VALKEY_HOST: pinepods-valkey
       VALKEY_PORT: 6379
-      PUID: 1000
-      PGID: 1000
-      TZ: Europe/Athens
-      USERNAME: ${PINEPODS_USER}
-      PASSWORD: ${PINEPODS_PASSWORD}
-      FULLNAME: Admin
-      EMAIL: ${PINEPODS_EMAIL}
+      PUID: ${PUID:-0}
+      PGID: ${PGID:-0}
+      TZ: ${TZ:-Etc/UTC}
+      USERNAME: ${PINEPODS_USERNAME:-admin}
+      PASSWORD: ${PINEPODS_PASSWORD:-changeme}
+      FULLNAME: ${PINEPODS_FULLNAME:-Admin User}
+      EMAIL: ${PINEPODS_EMAIL:-admin@example.com}
     volumes:
       - ./pinepods/downloads:/opt/pinepods/downloads
       - ./pinepods/backups:/opt/pinepods/backups
       - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
     depends_on:
       - pinepods-db
       - pinepods-valkey
@@ -288,12 +278,12 @@ services:
   jdownloader-2:
     container_name: jdownloader-2
     image: jlesage/jdownloader-2
-    user: "1000:1000"
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "5800:5800"
     volumes:
       - ./jdownloader/config:/config
-      - /mnt/${YOURDRIVE}/Downloads:/output
+      - ${DOWNLOADS_PATH:-/mnt/nvme/Downloads}:/output
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -303,22 +293,19 @@ services:
   owncast:
     container_name: owncast
     image: owncast/owncast:latest
-    user: "1000:1000"
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "1935:1935"
       - "8083:8080"
     volumes:
       - ./owncast/data:/app/data
     environment:
-      - OWNCAST_STREAM_KEY=${OWNCAST_STREAM_KEY}
+      - OWNCAST_STREAM_KEY=${OWNCAST_STREAM_KEY:-changeme}
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
     networks:
       - nginx_network
-
-volumes:
-  homeassistant_config:
 
 networks:
   nginx_network:
