@@ -79,26 +79,6 @@ services:
     networks:
       - nginx_network
 
-  nextcloud:
-    container_name: nextcloud
-    image: lscr.io/linuxserver/nextcloud:latest
-    user: "${PUID:-0}:${PGID:-0}"
-    ports:
-      - "8080:80"
-    environment:
-      - PUID=${PUID:-1000}
-      - PGID=${PGID:-1000}
-      - TZ=${TZ:-Etc/UTC}
-    volumes:
-      - ./nextcloud/appdata:/config
-      - ./nextcloud/data:/data
-      - ${PHOTOS_PATH:-/mnt/nvme/Camera Uploads}:/photos
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    networks:
-      - nginx_network
-
   jellyfin:
     container_name: jellyfin
     image: lscr.io/linuxserver/jellyfin:latest
