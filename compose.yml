@@ -6,7 +6,7 @@ services:
 
   baikal:
     container_name: baikal
-    image: ckulka/baikal:nginx
+    image: ghcr.io/aalmenar/baikal:nginx
     user: "0:0"
     ports:
       - "5232:80"
@@ -54,11 +54,14 @@ services:
   nginxproxymanager:
     container_name: nginxproxymanager
     image: jc21/nginx-proxy-manager:latest
-    user: "${PUID:-0}:${PGID:-0}"
+    user: "0:0"
     ports:
       - "80:80"
       - "81:81"
       - "443:443"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     volumes:
       - ./nginx/data:/data
       - ./nginx/letsencrypt:/etc/letsencrypt
