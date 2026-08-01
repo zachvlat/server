@@ -36,15 +36,16 @@ services:
     networks:
       - nginx_network
 
-  filebrowser:
-    container_name: filebrowser
-    image: hurlenko/filebrowser
-    user: "${PUID:-0}:${PGID:-0}"
+  filebrowser-quantum:
+    container_name: filebrowser-quantum
+    image: gtstef/filebrowser:latest
+    user: "0:0"
     ports:
-      - "8181:8080"
+      - "8182:80"
     volumes:
-      - ${FILEBROWSER_ROOT:-/}:/data
-      - ./filebrowser/config:/config
+      - /:/srv
+      - ./filebrowser-quantum/database:/database
+      - ./filebrowser-quantum/config:/config
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
