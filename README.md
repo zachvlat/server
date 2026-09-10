@@ -71,3 +71,4 @@ Before you start, make sure you have the following prerequisites installed on yo
 13. [Pinepods](https://www.pinepods.online) [http://localhost:8040](http://localhost:8040)
 14. [JDownloader](https://jdownloader.org/) [http://localhost:5800](http://localhost:5800)
 15. [Owncast](https://owncast.online/) [http://localhost:8083](http://localhost:8083)
+16. [YT Zero](https://ytzero.app/) [http://localhost:3001](http://localhost:3001)
