@@ -41,7 +41,7 @@ Before you start, make sure you have the following prerequisites installed on yo
    cd server
    ```
 
-2. Copy `.env-example` to `.env` and edit it according to your paths.
+2. Rename `.env-example` to `.env` and edit it according to your paths.
 
 3. ```bash
    chmod +x ./docker.sh
