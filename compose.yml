@@ -55,7 +55,7 @@ services:
     ports:
       - "8182:80"
     volumes:
-      - /:/srv
+      - ${FILEBROWSER_ROOT}:/srv
       - ./filebrowser-quantum/database:/database
       - ./filebrowser-quantum/config:/config
     restart: unless-stopped
@@ -108,9 +108,9 @@ services:
       - TZ=${TZ:-Etc/UTC}
     volumes:
       - ./jellyfin/config:/config
-      - ${TVSHOWS_PATH:-/mnt/ssd/series}:/data/tvshows
-      - ${ANIME_PATH:-/mnt/ssd/anime}:/data/anime
-      - ${MOVIES_PATH:-/mnt/nvme/Movies/complete}:/data/movies
+      - ${TVSHOWS_PATH}:/data/tvshows
+      - ${ANIME_PATH}:/data/anime
+      - ${MOVIES_PATH}:/data/movies
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -129,7 +129,7 @@ services:
       ND_SESSIONTIMEOUT: 24h
     volumes:
       - ./navidrome/data:/data
-      - ${MUSIC_PATH:-/mnt/nvme/Zatsando/Music}:/music:ro
+      - ${MUSIC_PATH}:/music:ro
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -143,7 +143,7 @@ services:
     ports:
       - "13378:80"
     volumes:
-      - ${AUDIOBOOKS_PATH:-/mnt/nvme/Zatsando/AudioBooks}:/audiobooks
+      - ${AUDIOBOOKS_PATH}:/audiobooks
       - ./audiobookshelf/podcasts:/podcasts
       - ./audiobookshelf/metadata:/metadata
       - ./audiobookshelf/config:/config
@@ -167,7 +167,7 @@ services:
       - "51413:51413/udp"
     volumes:
       - ./transmission/data:/config
-      - ${DOWNLOADS_PATH:-/mnt/nvme/Downloads}:/downloads
+      - ${DOWNLOADS_PATH}:/downloads
       - ./transmission/watch:/watch
     restart: unless-stopped
     security_opt:
@@ -186,7 +186,7 @@ services:
     ports:
       - "6595:6595"
     volumes:
-      - ${MUSIC_PATH:-/mnt/nvme/Zatsando/Music}:/downloads
+      - ${MUSIC_PATH}:/downloads
       - ./deemix/config:/config
     restart: unless-stopped
     security_opt:
@@ -203,7 +203,7 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - ${PHOTOS_PATH:-/mnt/nvme/Camera Uploads}:/app/data/photos
+      - ${PHOTOS_PATH}:/app/data/photos
       - ./pigallery2/config:/app/data/config
     restart: unless-stopped
     security_opt:
@@ -294,7 +294,7 @@ services:
       - "5800:5800"
     volumes:
       - ./jdownloader/config:/config
-      - ${DOWNLOADS_PATH:-/mnt/nvme/Downloads}:/output
+      - ${DOWNLOADS_PATH}:/output
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
