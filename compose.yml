@@ -16,6 +16,43 @@ services:
     networks:
       - nginx_network
 
+  miniflux-db:
+    container_name: miniflux-db
+    image: postgres:17
+    user: "${PUID:-0}:${PGID:-0}"
+    environment:
+      POSTGRES_USER: ${MINIFLUX_DB_USER:-miniflux}
+      POSTGRES_PASSWORD: ${MINIFLUX_DB_PASSWORD:-changeme}
+      POSTGRES_DB: ${MINIFLUX_DB_NAME:-miniflux}
+    volumes:
+      - ./miniflux/pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - nginx_network
+
+  miniflux:
+    container_name: miniflux
+    image: miniflux/miniflux:latest
+    user: "${PUID:-0}:${PGID:-0}"
+    ports:
+      - "8070:8080"
+    environment:
+      DATABASE_URL: postgres://${MINIFLUX_DB_USER:-miniflux}:${MINIFLUX_DB_PASSWORD:-changeme}@miniflux-db/${MINIFLUX_DB_NAME:-miniflux}?sslmode=disable
+      RUN_MIGRATIONS: "1"
+      CREATE_ADMIN: "1"
+      ADMIN_USERNAME: ${MINIFLUX_ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${MINIFLUX_ADMIN_PASSWORD:-changeme}
+      TZ: ${TZ:-Etc/UTC}
+    depends_on:
+      - miniflux-db
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - nginx_network
+
   baikal:
     container_name: baikal
     image: ghcr.io/aalmenar/baikal:nginx
