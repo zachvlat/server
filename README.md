@@ -5,7 +5,7 @@
 [![GitHub Forks](https://img.shields.io/github/forks/zachvlat/server.svg)](https://github.com/zachvlat/server/network)
 [![GitHub Issues](https://img.shields.io/github/issues/zachvlat/server.svg)](https://github.com/zachvlat/server/issues)
 
-This project is aimed at creating a comprehensive server setup for various purposes, such as hosting Jellyfin, Transmission, FileBrowser, and more using Docker containers and Nginx Proxy Manager.
+This project is aimed at creating a comprehensive server setup for various purposes, such as hosting Jellyfin, Miniflux, FileBrowser, and more using Docker containers and Nginx Proxy Manager, giving the user a complete stack of a private digital life!
 
 ## Table of Contents
 - [Server Project](#server-project)
@@ -57,18 +57,19 @@ Before you start, make sure you have the following prerequisites installed on yo
 ## Services
 
 1.  [Baikal](https://sabre.io/baikal) [http://localhost:5232](http://localhost:5232)
-2.  [Jellyfin](https://jellyfin.org) [http://localhost:8096](http://localhost:8096)
-3.  [Transmission](https://transmissionbt.com) [http://localhost:9091](http://localhost:9091)
-4.  [Deemix](https://deemix.app) [http://localhost:6595](http://localhost:6595)
-5.  [Navidrome](https://www.navidrome.org) [http://localhost:4533](http://localhost:4533)
-6.  [Portainer](https://www.portainer.io) [http://localhost:9000](http://localhost:9000)
-7.  [Audiobookshelf](https://github.com/advplyr/audiobookshelf) [http://localhost:13378](http://localhost:13378)
-8.  [Vaultwarden](https://github.com/dani-garcia/vaultwarden) [http://localhost:9445](http://localhost:9445)
-9.  [PiGallery2](https://bpatrik.github.io/pigallery2) [http://localhost:8082](http://localhost:8082)
-10. [NGINX Proxy Manager](https://nginxproxymanager.com) [http://localhost:81](http://localhost:81)
-11. [Gitea](https://about.gitea.com/) [http://localhost:3000](http://localhost:3000)
-12. [FileBrowser](https://filebrowserquantum.com) [http://localhost:8181](http://localhost:8182)
-13. [Pinepods](https://www.pinepods.online) [http://localhost:8040](http://localhost:8040)
-14. [JDownloader](https://jdownloader.org/) [http://localhost:5800](http://localhost:5800)
-15. [Owncast](https://owncast.online/) [http://localhost:8083](http://localhost:8083)
-16. [YT Zero](https://ytzero.app/) [http://localhost:3001](http://localhost:3001)
+2.  [Miniflux V2](https://miniflux.app/)[http://localhost:8070](http://localhost:8070)
+3.  [Jellyfin](https://jellyfin.org) [http://localhost:8096](http://localhost:8096)
+4.  [Transmission](https://transmissionbt.com) [http://localhost:9091](http://localhost:9091)
+5.  [Deemix](https://deemix.app) [http://localhost:6595](http://localhost:6595)
+6.  [Navidrome](https://www.navidrome.org) [http://localhost:4533](http://localhost:4533)
+7.  [Portainer](https://www.portainer.io) [http://localhost:9000](http://localhost:9000)
+8.  [Audiobookshelf](https://github.com/advplyr/audiobookshelf) [http://localhost:13378](http://localhost:13378)
+9.  [Vaultwarden](https://github.com/dani-garcia/vaultwarden) [http://localhost:9445](http://localhost:9445)
+10.  [PiGallery2](https://bpatrik.github.io/pigallery2) [http://localhost:8082](http://localhost:8082)
+11. [NGINX Proxy Manager](https://nginxproxymanager.com) [http://localhost:81](http://localhost:81)
+12. [Gitea](https://about.gitea.com/) [http://localhost:3000](http://localhost:3000)
+13. [FileBrowser](https://filebrowserquantum.com) [http://localhost:8181](http://localhost:8182)
+14. [Pinepods](https://www.pinepods.online) [http://localhost:8040](http://localhost:8040)
+15. [JDownloader](https://jdownloader.org/) [http://localhost:5800](http://localhost:5800)
+16. [Owncast](https://owncast.online/) [http://localhost:8083](http://localhost:8083)
+17. [YT Zero](https://ytzero.app/) [http://localhost:3001](http://localhost:3001)
