@@ -37,8 +37,9 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 sudo apt update
 sudo apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-sudo usermod -aG docker "$(whoami)"
+TARGET_USER="${SUDO_USER:-$(whoami)}"
+sudo usermod -aG docker "$TARGET_USER"
 
-echo "Installation complete. Reboot or run 'newgrp docker' to apply group changes."
+echo "Installation complete for user '$TARGET_USER'. Reboot or run 'newgrp docker' to apply group changes."
 docker --version
 docker compose version
