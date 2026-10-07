@@ -26,6 +26,12 @@ services:
       POSTGRES_DB: ${MINIFLUX_DB_NAME:-miniflux}
     volumes:
       - ./miniflux/pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${MINIFLUX_DB_USER:-miniflux} -d ${MINIFLUX_DB_NAME:-miniflux}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -46,7 +52,8 @@ services:
       ADMIN_PASSWORD: ${MINIFLUX_ADMIN_PASSWORD:-changeme}
       TZ: ${TZ:-Etc/UTC}
     depends_on:
-      - miniflux-db
+      miniflux-db:
+        condition: service_healthy
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -92,7 +99,7 @@ services:
     ports:
       - "8182:80"
     volumes:
-      - ${FILEBROWSER_ROOT}:/srv
+      - ${FILEBROWSER_ROOT:?FILEBROWSER_ROOT must be set in .env}:/srv
       - ./filebrowser-quantum/database:/database
       - ./filebrowser-quantum/config:/config
     restart: unless-stopped
@@ -116,6 +123,8 @@ services:
       - ./nginx/data:/data
       - ./nginx/letsencrypt:/etc/letsencrypt
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
@@ -129,6 +138,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./portainer/data:/data
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
@@ -145,9 +156,9 @@ services:
       - TZ=${TZ:-Etc/UTC}
     volumes:
       - ./jellyfin/config:/config
-      - ${TVSHOWS_PATH}:/data/tvshows
-      - ${ANIME_PATH}:/data/anime
-      - ${MOVIES_PATH}:/data/movies
+      - ${TVSHOWS_PATH:?TVSHOWS_PATH must be set in .env}:/data/tvshows
+      - ${ANIME_PATH:?ANIME_PATH must be set in .env}:/data/anime
+      - ${MOVIES_PATH:?MOVIES_PATH must be set in .env}:/data/movies
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -166,7 +177,7 @@ services:
       ND_SESSIONTIMEOUT: 24h
     volumes:
       - ./navidrome/data:/data
-      - ${MUSIC_PATH}:/music:ro
+      - ${MUSIC_PATH:?MUSIC_PATH must be set in .env}:/music:ro
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -180,7 +191,7 @@ services:
     ports:
       - "13378:80"
     volumes:
-      - ${AUDIOBOOKS_PATH}:/audiobooks
+      - ${AUDIOBOOKS_PATH:?AUDIOBOOKS_PATH must be set in .env}:/audiobooks
       - ./audiobookshelf/podcasts:/podcasts
       - ./audiobookshelf/metadata:/metadata
       - ./audiobookshelf/config:/config
@@ -204,7 +215,7 @@ services:
       - "51413:51413/udp"
     volumes:
       - ./transmission/data:/config
-      - ${DOWNLOADS_PATH}:/downloads
+      - ${DOWNLOADS_PATH:?DOWNLOADS_PATH must be set in .env}:/downloads
       - ./transmission/watch:/watch
     restart: unless-stopped
     security_opt:
@@ -223,7 +234,8 @@ services:
     ports:
       - "6595:6595"
     volumes:
-      - ${MUSIC_PATH}:/downloads
+      # Deemix WRITES new downloads into MUSIC_PATH; Navidrome mounts it read-only.
+      - ${MUSIC_PATH:?MUSIC_PATH must be set in .env}:/downloads
       - ./deemix/config:/config
     restart: unless-stopped
     security_opt:
@@ -240,7 +252,7 @@ services:
     environment:
       - NODE_ENV=production
     volumes:
-      - ${PHOTOS_PATH}:/app/data/photos
+      - ${PHOTOS_PATH:?PHOTOS_PATH must be set in .env}:/app/data/photos
       - ./pigallery2/config:/app/data/config
     restart: unless-stopped
     security_opt:
@@ -273,7 +285,15 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - ./pinepods/pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PINEPODS_DB_USER:-postgres} -d ${PINEPODS_DB_NAME:-pinepods_database}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
@@ -281,7 +301,15 @@ services:
     container_name: pinepods-valkey
     image: valkey/valkey:8-alpine
     user: "${PUID:-0}:${PGID:-0}"
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     networks:
       - nginx_network
 
@@ -315,8 +343,10 @@ services:
       - ./pinepods/backups:/opt/pinepods/backups
       - /etc/localtime:/etc/localtime:ro
     depends_on:
-      - pinepods-db
-      - pinepods-valkey
+      pinepods-db:
+        condition: service_healthy
+      pinepods-valkey:
+        condition: service_healthy
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -331,7 +361,7 @@ services:
       - "5800:5800"
     volumes:
       - ./jdownloader/config:/config
-      - ${DOWNLOADS_PATH}:/output
+      - ${DOWNLOADS_PATH:?DOWNLOADS_PATH must be set in .env}:/output
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true

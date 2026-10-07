@@ -1,0 +1,21 @@
+# Secrets / local configuration
+.env
+
+# Runtime data created by the containers (bind mounts)
+/audiobookshelf/
+/baikal/
+/bitwarden/
+/deemix/
+/filebrowser-quantum/
+/gitea/
+/jdownloader/
+/jellyfin/
+/miniflux/
+/navidrome/
+/nginx/
+/owncast/
+/pigallery2/
+/pinepods/
+/portainer/
+/transmission/
+/ytzero/

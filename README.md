@@ -68,7 +68,7 @@ Before you start, make sure you have the following prerequisites installed on yo
 10.  [PiGallery2](https://bpatrik.github.io/pigallery2) [http://localhost:8082](http://localhost:8082)
 11. [NGINX Proxy Manager](https://nginxproxymanager.com) [http://localhost:81](http://localhost:81)
 12. [Gitea](https://about.gitea.com/) [http://localhost:3000](http://localhost:3000)
-13. [FileBrowser](https://filebrowserquantum.com) [http://localhost:8181](http://localhost:8182)
+13. [FileBrowser](https://filebrowserquantum.com) [http://localhost:8182](http://localhost:8182)
 14. [Pinepods](https://www.pinepods.online) [http://localhost:8040](http://localhost:8040)
 15. [JDownloader](https://jdownloader.org/) [http://localhost:5800](http://localhost:5800)
 16. [Owncast](https://owncast.online/) [http://localhost:8083](http://localhost:8083)
