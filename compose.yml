@@ -353,15 +353,9 @@ services:
     networks:
       - nginx_network
 
-  jdownloader-2:
-    container_name: jdownloader-2
-    image: jlesage/jdownloader-2
-    user: "${PUID:-0}:${PGID:-0}"
-    ports:
-      - "5800:5800"
-    volumes:
-      - ./jdownloader/config:/config
-      - ${DOWNLOADS_PATH:?DOWNLOADS_PATH must be set in .env}:/output
+  twitchsen:
+    container_name: twitchsen
+    image: zatsando/twitchsen:latest
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
