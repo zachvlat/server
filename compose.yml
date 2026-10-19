@@ -75,15 +75,15 @@ services:
     networks:
       - nginx_network
 
-  gitea:
-    container_name: gitea
-    image: docker.gitea.com/gitea:latest
-    user: "${PUID:-0}:${PGID:-0}"
+  forgejo:
+    container_name: forgejo
+    image: codeberg.org/forgejo/forgejo:17
+    user: "0:0"
     ports:
       - "3000:3000"
       - "2222:22"
     volumes:
-      - ./gitea:/data
+      - ./forgejo:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
