@@ -1,11 +1,9 @@
-# =============================================================================
-#  #  Rename .env-example to .env and adjust the values before starting.
-# =============================================================================
 services:
 
   ytzero:
     image: ghcr.io/pelski/ytzero:latest
     container_name: ytzero
+    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "3001:3001"
     volumes:
@@ -22,7 +20,7 @@ services:
     user: "${PUID:-0}:${PGID:-0}"
     environment:
       POSTGRES_USER: ${MINIFLUX_DB_USER:-miniflux}
-      POSTGRES_PASSWORD: ${MINIFLUX_DB_PASSWORD:-changeme}
+      POSTGRES_PASSWORD: ${MINIFLUX_DB_PASSWORD:?MINIFLUX_DB_PASSWORD must be set in .env}
       POSTGRES_DB: ${MINIFLUX_DB_NAME:-miniflux}
     volumes:
       - ./miniflux/pgdata:/var/lib/postgresql/data
@@ -45,11 +43,11 @@ services:
     ports:
       - "8070:8080"
     environment:
-      DATABASE_URL: postgres://${MINIFLUX_DB_USER:-miniflux}:${MINIFLUX_DB_PASSWORD:-changeme}@miniflux-db/${MINIFLUX_DB_NAME:-miniflux}?sslmode=disable
+      DATABASE_URL: postgres://${MINIFLUX_DB_USER:-miniflux}:${MINIFLUX_DB_PASSWORD:?MINIFLUX_DB_PASSWORD must be set in .env}@miniflux-db/${MINIFLUX_DB_NAME:-miniflux}?sslmode=disable
       RUN_MIGRATIONS: "1"
       CREATE_ADMIN: "1"
       ADMIN_USERNAME: ${MINIFLUX_ADMIN_USERNAME:-admin}
-      ADMIN_PASSWORD: ${MINIFLUX_ADMIN_PASSWORD:-changeme}
+      ADMIN_PASSWORD: ${MINIFLUX_ADMIN_PASSWORD:?MINIFLUX_ADMIN_PASSWORD must be set in .env}
       TZ: ${TZ:-Etc/UTC}
     depends_on:
       miniflux-db:
@@ -146,7 +144,6 @@ services:
   jellyfin:
     container_name: jellyfin
     image: lscr.io/linuxserver/jellyfin:latest
-    user: "${PUID:-0}:${PGID:-0}"
     ports:
       - "8096:8096"
       - "8920:8920"
@@ -204,7 +201,6 @@ services:
   transmission:
     container_name: transmission
     image: lscr.io/linuxserver/transmission:latest
-    user: "${PUID:-0}:${PGID:-0}"
     environment:
       - PUID=${PUID:-0}
       - PGID=${PGID:-0}
@@ -356,6 +352,16 @@ services:
   twitchsen:
     container_name: twitchsen
     image: zatsando/twitchsen:latest
+    user: "${PUID:-0}:${PGID:-0}"
+    ports:
+      - "4444:4444"
+    environment:
+      - PORT=4444
+      - NODE_ENV=production
+      - TZ=${TZ:-Etc/UTC}
+      - LIVE_STATUS=on
+    volumes:
+      - ./twitchsen/data:/app/backend/db
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
