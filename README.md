@@ -70,6 +70,6 @@ Before you start, make sure you have the following prerequisites installed on yo
 12. [Forgejo](https://forgejo.org/) [http://localhost:3000](http://localhost:3000)
 13. [FileBrowser](https://filebrowserquantum.com) [http://localhost:8182](http://localhost:8182)
 14. [Pinepods](https://www.pinepods.online) [http://localhost:8040](http://localhost:8040)
-15. [Twitchsen](https://github.com/zachvlat/twitchsen/) [http://localhost:4444](http://localhost:4444)
+15. [Twitchsen](https://zachvlat.github.io/twitchsen/) [http://localhost:4444](http://localhost:4444)
 16. [Owncast](https://owncast.online/) [http://localhost:8083](http://localhost:8083)
 17. [YT Zero](https://ytzero.app/) [http://localhost:3001](http://localhost:3001)
