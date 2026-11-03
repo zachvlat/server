@@ -41,7 +41,7 @@ Before you start, make sure you have the following prerequisites installed on yo
    cd server
    ```
 
-2. Rename `.env-example` to `.env` and edit it according to your paths.
+2. Write your paths and passwords on `.env`.
 
 3. ```bash
    chmod +x ./docker.sh
@@ -57,7 +57,7 @@ Before you start, make sure you have the following prerequisites installed on yo
 ## Services
 
 1.  [Baikal](https://sabre.io/baikal) [http://localhost:5232](http://localhost:5232)
-2.  [Miniflux V2](https://miniflux.app/)[http://localhost:8070](http://localhost:8070)
+2.  [Miniflux V2] (https://miniflux.app/)[http://localhost:8070](http://localhost:8070)
 3.  [Jellyfin](https://jellyfin.org) [http://localhost:8096](http://localhost:8096)
 4.  [Transmission](https://transmissionbt.com) [http://localhost:9091](http://localhost:9091)
 5.  [Deemix](https://deemix.app) [http://localhost:6595](http://localhost:6595)
