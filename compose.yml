@@ -234,7 +234,6 @@ services:
     ports:
       - "6595:6595"
     volumes:
-      # Deemix WRITES new downloads into MUSIC_PATH; Navidrome mounts it read-only.
       - ${MUSIC_PATH:?MUSIC_PATH must be set in .env}:/downloads
       - ./deemix/config:/config
     restart: unless-stopped
