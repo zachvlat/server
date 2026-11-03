@@ -19,13 +19,13 @@ services:
     image: postgres:17
     user: "${PUID:-0}:${PGID:-0}"
     environment:
-      POSTGRES_USER: ${MINIFLUX_DB_USER:-miniflux}
-      POSTGRES_PASSWORD: ${MINIFLUX_DB_PASSWORD:?MINIFLUX_DB_PASSWORD must be set in .env}
-      POSTGRES_DB: ${MINIFLUX_DB_NAME:-miniflux}
+      POSTGRES_USER: ${MF_DB_USER:-miniflux}
+      POSTGRES_PASSWORD: ${MF_DB_PASS:?MF_DB_PASS must be set in .env}
+      POSTGRES_DB: ${MF_DB_NAME:-miniflux}
     volumes:
       - ./miniflux/pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${MINIFLUX_DB_USER:-miniflux} -d ${MINIFLUX_DB_NAME:-miniflux}"]
+      test: ["CMD-SHELL", "pg_isready -U ${MF_DB_USER:-miniflux} -d ${MF_DB_NAME:-miniflux}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -43,11 +43,11 @@ services:
     ports:
       - "8070:8080"
     environment:
-      DATABASE_URL: postgres://${MINIFLUX_DB_USER:-miniflux}:${MINIFLUX_DB_PASSWORD:?MINIFLUX_DB_PASSWORD must be set in .env}@miniflux-db/${MINIFLUX_DB_NAME:-miniflux}?sslmode=disable
+      DATABASE_URL: postgres://${MF_DB_USER:-miniflux}:${MF_DB_PASS:?MF_DB_PASS must be set in .env}@miniflux-db/${MF_DB_NAME:-miniflux}?sslmode=disable
       RUN_MIGRATIONS: "1"
       CREATE_ADMIN: "1"
-      ADMIN_USERNAME: ${MINIFLUX_ADMIN_USERNAME:-admin}
-      ADMIN_PASSWORD: ${MINIFLUX_ADMIN_PASSWORD:?MINIFLUX_ADMIN_PASSWORD must be set in .env}
+      ADMIN_USERNAME: ${MF_ADMIN_USER:-admin}
+      ADMIN_PASSWORD: ${MF_ADMIN_PASS:?MF_ADMIN_PASS must be set in .env}
       TZ: ${TZ:-Etc/UTC}
     depends_on:
       miniflux-db:
@@ -96,10 +96,14 @@ services:
     user: "0:0"
     ports:
       - "8182:80"
+    environment:
+      FILEBROWSER_CONFIG: /home/filebrowser/config.yaml
     volumes:
-      - ${FILEBROWSER_ROOT:?FILEBROWSER_ROOT must be set in .env}:/srv
+      - ${FB_ROOT:?FB_ROOT must be set in .env}:/srv
       - ./filebrowser-quantum/database:/database
-      - ./filebrowser-quantum/config:/config
+    configs:
+      - source: filebrowser_config
+        target: /home/filebrowser/config.yaml
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -153,7 +157,7 @@ services:
       - TZ=${TZ:-Etc/UTC}
     volumes:
       - ./jellyfin/config:/config
-      - ${TVSHOWS_PATH:?TVSHOWS_PATH must be set in .env}:/data/tvshows
+      - ${TV_PATH:?TV_PATH must be set in .env}:/data/tvshows
       - ${ANIME_PATH:?ANIME_PATH must be set in .env}:/data/anime
       - ${MOVIES_PATH:?MOVIES_PATH must be set in .env}:/data/movies
     restart: unless-stopped
@@ -188,7 +192,7 @@ services:
     ports:
       - "13378:80"
     volumes:
-      - ${AUDIOBOOKS_PATH:?AUDIOBOOKS_PATH must be set in .env}:/audiobooks
+      - ${BOOKS_PATH:?BOOKS_PATH must be set in .env}:/audiobooks
       - ./audiobookshelf/podcasts:/podcasts
       - ./audiobookshelf/metadata:/metadata
       - ./audiobookshelf/config:/config
@@ -211,7 +215,7 @@ services:
       - "51413:51413/udp"
     volumes:
       - ./transmission/data:/config
-      - ${DOWNLOADS_PATH:?DOWNLOADS_PATH must be set in .env}:/downloads
+      - ${DL_PATH:?DL_PATH must be set in .env}:/downloads
       - ./transmission/watch:/watch
     restart: unless-stopped
     security_opt:
@@ -275,14 +279,14 @@ services:
     image: postgres:17
     user: "${PUID:-0}:${PGID:-0}"
     environment:
-      POSTGRES_DB: ${PINEPODS_DB_NAME:-pinepods_database}
-      POSTGRES_USER: ${PINEPODS_DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${PINEPODS_DB_PASSWORD:-changeme}
+      POSTGRES_DB: ${PP_DB_NAME:-pinepods_database}
+      POSTGRES_USER: ${PP_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${PP_DB_PASS:-changeme}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - ./pinepods/pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${PINEPODS_DB_USER:-postgres} -d ${PINEPODS_DB_NAME:-pinepods_database}"]
+      test: ["CMD-SHELL", "pg_isready -U ${PP_DB_USER:-postgres} -d ${PP_DB_NAME:-pinepods_database}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -316,24 +320,24 @@ services:
     ports:
       - "8040:8040"
     environment:
-      HOSTNAME: ${PINEPODS_HOSTNAME:-http://localhost:8040}
+      HOSTNAME: ${PP_HOST:-http://localhost:8040}
       SEARCH_API_URL: 'https://search.pinepods.online/api/search'
       PEOPLE_API_URL: 'https://people.pinepods.online'
       DB_TYPE: postgresql
       DB_HOST: pinepods-db
       DB_PORT: 5432
-      DB_USER: ${PINEPODS_DB_USER:-postgres}
-      DB_PASSWORD: ${PINEPODS_DB_PASSWORD:-changeme}
-      DB_NAME: ${PINEPODS_DB_NAME:-pinepods_database}
+      DB_USER: ${PP_DB_USER:-postgres}
+      DB_PASSWORD: ${PP_DB_PASS:-changeme}
+      DB_NAME: ${PP_DB_NAME:-pinepods_database}
       VALKEY_HOST: pinepods-valkey
       VALKEY_PORT: 6379
       PUID: ${PUID:-0}
       PGID: ${PGID:-0}
       TZ: ${TZ:-Etc/UTC}
-      USERNAME: ${PINEPODS_USERNAME:-admin}
-      PASSWORD: ${PINEPODS_PASSWORD:-changeme}
-      FULLNAME: ${PINEPODS_FULLNAME:-Admin User}
-      EMAIL: ${PINEPODS_EMAIL:-admin@example.com}
+      USERNAME: ${PP_USER:-admin}
+      PASSWORD: ${PP_PASS:-changeme}
+      FULLNAME: ${PP_NAME:-Admin User}
+      EMAIL: ${PP_EMAIL:-admin@example.com}
     volumes:
       - ./pinepods/downloads:/opt/pinepods/downloads
       - ./pinepods/backups:/opt/pinepods/backups
@@ -378,12 +382,22 @@ services:
     volumes:
       - ./owncast/data:/app/data
     environment:
-      - OWNCAST_STREAM_KEY=${OWNCAST_STREAM_KEY:-changeme}
+      - OWNCAST_STREAM_KEY=${OC_KEY:-changeme}
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
     networks:
       - nginx_network
+
+configs:
+  filebrowser_config:
+    content: |
+      server:
+        sources:
+          - path: /srv
+      auth:
+        adminUsername: ${FB_USER:?FB_USER must be set in .env}
+        adminPassword: ${FB_PASS:?FB_PASS must be set in .env}
 
 networks:
   nginx_network:
